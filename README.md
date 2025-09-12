@@ -44,7 +44,7 @@ Serein Blog Platform là một hệ thống blog cá nhân hiện đại đượ
 
 1. **Clone dự án**
    ```bash
-   git clone https://github.com/your-username/serein-blog.git
+   git clone https://github.com/datyuno1409/serein-blog.git
    cd serein-blog
    ```
 
@@ -67,9 +67,9 @@ Serein Blog Platform là một hệ thống blog cá nhân hiện đại đượ
    ```
 
 5. **Truy cập admin panel**
-   - URL: `http://your-domain.com/admin`
+   - URL: `http://localhost:8000/admin`
    - Tạo tài khoản admin đầu tiên
-
+   admin / admin123
 ## Cấu trúc thư mục
 
 ```
@@ -157,28 +157,6 @@ serein-blog-new/
 1. Chỉnh sửa file CSS trong `assets/css/`
 2. Cập nhật JavaScript trong `assets/js/`
 3. Sử dụng file minified cho production
-
-## Đóng góp và Phát triển
-
-### Báo cáo lỗi
-Nếu bạn phát hiện lỗi, vui lòng tạo issue trên GitHub với thông tin:
-- Mô tả chi tiết lỗi
-- Các bước tái hiện
-- Screenshots (nếu có)
-- Thông tin môi trường (PHP version, OS, browser)
-
-### Đóng góp code
-1. Fork repository
-2. Tạo branch mới cho feature
-3. Commit changes với message rõ ràng
-4. Tạo Pull Request
-5. Đợi review và merge
-
-### Coding Standards
-- Sử dụng PSR-4 autoloading
-- Comment code bằng tiếng Anh
-- Tuân thủ naming conventions
-- Viết unit tests cho features mới
 
 ## Thông tin liên hệ
 
