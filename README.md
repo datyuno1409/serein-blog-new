@@ -4,6 +4,8 @@
 
 Serein Blog Platform là một hệ thống blog cá nhân hiện đại được thiết kế dành cho các chuyên gia kỹ thuật và lập trình viên. Dự án cung cấp một nền tảng hoàn chỉnh để chia sẻ kiến thức, kinh nghiệm và dự án cá nhân với giao diện terminal-style độc đáo và hiệu ứng hacker-style ấn tượng.
 <img width="1048" height="921" alt="image" src="https://github.com/user-attachments/assets/9553e648-d1af-4ab6-a3cd-bf63fe0ae20c" />
+<img width="1870" height="923" alt="image" src="https://github.com/user-attachments/assets/11b15d7d-0af6-4053-9359-0491010ab57d" />
+<img width="1875" height="924" alt="image" src="https://github.com/user-attachments/assets/274ce219-b00f-4496-90a2-aaf00d0221cd" />
 
 ## Tính năng nổi bật
 
