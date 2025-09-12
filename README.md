@@ -1,149 +1,52 @@
 # Serein Blog Platform
 
-## 🌟 Giới thiệu
-Serein là một blog platform hiện đại với giao diện terminal-style độc đáo, được thiết kế để showcase portfolio và blog cá nhân.
+> Modern terminal-style blog platform với giao diện hacker-style độc đáo
 
 ## 🚀 Demo
-- **Live Demo**: [https://serein-new.netlify.app](https://serein-new.netlify.app)
-- **Static Version**: Chỉ bao gồm frontend (HTML/CSS/JS)
+- **Live**: [serein-new.netlify.app](https://serein-new.netlify.app)
+- **GitHub**: [datyuno1409/serein-blog-new](https://github.com/datyuno1409/serein-blog-new)
 
-## ⚠️ Lưu ý quan trọng về Netlify Deployment
-
-### Tại sao Admin Area không hoạt động trên Netlify?
-
-**Netlify chỉ hỗ trợ static hosting**, không thể chạy:
-- ❌ PHP backend
-- ❌ MySQL database
-- ❌ Server-side processing
-- ❌ Admin panel
-- ❌ API endpoints
-
-### Các tính năng hoạt động trên Netlify:
-- ✅ Frontend pages (HTML/CSS/JS)
-- ✅ Responsive design
-- ✅ Clean URLs
-- ✅ Static content
-- ✅ Portfolio showcase
-
-### Các tính năng KHÔNG hoạt động trên Netlify:
-- ❌ `/admin/*` - Admin panel
-- ❌ `/api.php` - API endpoints
-- ❌ Database operations
-- ❌ User authentication
-- ❌ Dynamic content management
-
-## 🛠️ Deployment Options
-
-### 1. Static Hosting (Netlify - Hiện tại)
-```bash
-# Chỉ frontend, không có admin
-git push origin main
-# Auto deploy to Netlify
-```
-
-### 2. Full Stack Hosting (Cần PHP + MySQL)
-**Recommended providers:**
-- **VPS**: DigitalOcean, Linode, Vultr
-- **Shared Hosting**: Hostinger, SiteGround
-- **Cloud**: AWS EC2, Google Cloud
+## ⚡ Quick Start
 
 ```bash
-# Upload toàn bộ project
-# Cấu hình database
-# Import serein.sql
-# Cấu hình web server (Apache/Nginx)
-```
-
-### 3. Serverless Migration (Tương lai)
-- Convert PHP API to Netlify Functions
-- Use headless CMS (Strapi, Sanity)
-- JAMstack architecture
-
-## 📁 Project Structure
-
-```
-serein-blog-new/
-├── 📄 Static Pages (Hoạt động trên Netlify)
-│   ├── index.html          # Trang chủ
-│   ├── about.html          # Giới thiệu
-│   ├── blog.html           # Blog listing
-│   ├── post.html           # Blog post
-│   ├── services.html       # Portfolio
-│   └── 404.html           # Error page
-│
-├── 🎨 Assets
-│   ├── assets/css/         # Stylesheets
-│   ├── assets/js/          # JavaScript
-│   └── assets/images/      # Images
-│
-├── ⚙️ Backend (KHÔNG hoạt động trên Netlify)
-│   ├── admin/              # Admin panel (PHP)
-│   ├── api/                # API endpoints (PHP)
-│   ├── config/             # Database config
-│   ├── models/             # Data models
-│   └── docs/serein.sql     # Database schema
-│
-└── 🔧 Config Files
-    ├── netlify.toml        # Netlify configuration
-    ├── _redirects          # URL redirects
-    ├── .htaccess          # Apache config (local)
-    └── router.php         # PHP router (local)
-```
-
-## 🔧 Local Development
-
-### Prerequisites
-- PHP 7.4+
-- MySQL 5.7+
-- Web server (Apache/Nginx)
-
-### Setup
-```bash
-# Clone repository
-git clone <repository-url>
+# Clone & Setup
+git clone https://github.com/datyuno1409/serein-blog-new.git
 cd serein-blog-new
 
-# Import database
-mysql -u root -p serein < docs/serein.sql
-
-# Start PHP server
+# Local Development (PHP + MySQL)
 php -S localhost:8000 router.php
 
-# Access
-# Frontend: http://localhost:8000
-# Admin: http://localhost:8000/admin
+# Static Deployment (Netlify)
+git push origin main
 ```
 
-## 🌐 URLs
+## 🎯 Features
 
-### Production (Netlify)
-- **Homepage**: https://serein-new.netlify.app/
-- **About**: https://serein-new.netlify.app/about
-- **Portfolio**: https://serein-new.netlify.app/portfolio
-- **Blog**: https://serein-new.netlify.app/blog
-- **Admin**: ❌ Không khả dụng (hiển thị thông báo)
+- ✅ **Terminal UI** - Matrix rain effects, typewriter animation
+- ✅ **Responsive** - Mobile-first design
+- ✅ **Static Ready** - Works on Netlify/Vercel
+- ❌ **Admin Panel** - Requires PHP hosting (VPS/Shared)
 
-### Local Development
-- **Homepage**: http://localhost:8000/
-- **Admin**: http://localhost:8000/admin/
-- **API**: http://localhost:8000/api.php
+## 📁 Structure
 
-## 🚀 Migration to Full Stack
+```
+├── index.html, about.html, blog.html    # Static pages
+├── assets/css/, assets/js/               # Frontend assets
+├── admin/, api/, config/, models/        # PHP backend
+└── netlify.toml, _redirects              # Deploy config
+```
 
-Nếu bạn muốn sử dụng đầy đủ tính năng admin:
+## 🔧 Hosting
 
-1. **Chọn hosting hỗ trợ PHP**
-2. **Upload toàn bộ project**
-3. **Tạo database và import SQL**
-4. **Cấu hình database connection**
-5. **Setup web server**
+| Platform | Frontend | Admin | Database |
+|----------|----------|-------|-----------|
+| **Netlify** | ✅ | ❌ | ❌ |
+| **VPS/Cloud** | ✅ | ✅ | ✅ |
+| **Shared Hosting** | ✅ | ✅ | ✅ |
 
-## 📞 Support
-
-Nếu cần hỗ trợ migration hoặc setup full stack, vui lòng liên hệ.
+**Note**: Admin area cần PHP + MySQL. Netlify chỉ hỗ trợ static files.
 
 ---
-
 **Made with ❤️ by SEREIN**
 
 ## Mô tả dự án
@@ -301,33 +204,11 @@ serein-blog-new/
 2. Cập nhật JavaScript trong `assets/js/`
 3. Sử dụng file minified cho production
 
-## Đóng góp và Phát triển
-
-### Báo cáo lỗi
-Nếu bạn phát hiện lỗi, vui lòng tạo issue trên GitHub với thông tin:
-- Mô tả chi tiết lỗi
-- Các bước tái hiện
-- Screenshots (nếu có)
-- Thông tin môi trường (PHP version, OS, browser)
-
-### Đóng góp code
-1. Fork repository
-2. Tạo branch mới cho feature
-3. Commit changes với message rõ ràng
-4. Tạo Pull Request
-5. Đợi review và merge
-
-### Coding Standards
-- Sử dụng PSR-4 autoloading
-- Comment code bằng tiếng Anh
-- Tuân thủ naming conventions
-- Viết unit tests cho features mới
-
 ## Thông tin liên hệ
 
 **Tác giả**: Nguyen Thanh Dat  
-**Email**: dat.nguyen.tech@gmail.com  
-**GitHub**: [github.com/your-username](https://github.com/your-username)  
+**Email**: ngthanhdat.fudn@gmail.com  
+**GitHub**: [github.com/datyuno1409](https://github.com/datyuno1409)  
 **Website**: [your-website.com](https://your-website.com)  
 
 ## License
