@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="post-title">Loading... - Serein Blog</title>
+    <meta name="description" id="post-description" content="Cybersecurity insights and research from Serein.">
+    <meta name="keywords" id="post-keywords" content="cybersecurity, security research, penetration testing">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/home" class="logo">NGUYEN THANH DAT</a>
+            <ul class="nav-menu">
+                <li><a href="/home" class="nav-link">Home</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+                <li><a href="/portfolio" class="nav-link">Portfolio</a></li>
+                <li><a href="/blog" class="nav-link">Blog</a></li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container" style="margin-top: 2rem;">
+            <!-- Loading State -->
+            <div id="loading-state">
+                <div class="loading" style="text-align: center; margin: 3rem 0;"></div>
+            </div>
+
+            <!-- Post Content -->
+            <article id="post-content" style="display: none;">
+                <!-- Post Header -->
+                <header class="post-header" style="margin-bottom: 3rem;">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="prompt">serein@security:~$</span> cat blog/<span id="post-slug-display"></span>.md
+                        </div>
+                        <div class="terminal-content">
+                            <h1 id="article-title" class="hero-title" style="margin: 1rem 0;"></h1>
+                            <div id="post-meta" class="post-meta" style="color: var(--text-muted); margin: 1rem 0;">
+                                <!-- Meta info will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Post Body -->
+                <section class="post-body">
+                    <div class="card">
+                        <div class="card-content">
+                            <div id="article-content">
+                                <!-- Article content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Post Tags -->
+                <section id="post-tags-section" style="margin: 2rem 0; display: none;">
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <span class="prompt">$</span> grep -o "#[a-zA-Z0-9_]*" <span id="post-slug-display-2"></span>.md
+                        </div>
+                        <div class="terminal-content">
+                            <div id="post-tags">
+                                <!-- Tags will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation -->
+                <section class="post-navigation" style="margin: 3rem 0;">
+                    <div class="grid grid-2">
+                        <div id="prev-post" class="card" style="display: none;">
+                            <div class="card-content">
+                                <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">← Previous Post</h4>
+                                <a id="prev-post-link" href="#" style="text-decoration: none;">
+                                    <span id="prev-post-title"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="next-post" class="card" style="display: none;">
+                            <div class="card-content" style="text-align: right;">
+                                <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Next Post →</h4>
+                                <a id="next-post-link" href="#" style="text-decoration: none;">
+                                    <span id="next-post-title"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Related Posts -->
+                <section id="related-posts" style="margin: 3rem 0; display: none;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 2rem; font-size: 2rem;">Related Articles</h2>
+                    <div id="related-posts-content">
+                        <!-- Related posts will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Comments Section -->
+                <section class="comments-section" style="margin: 3rem 0;">
+                    <div class="card">
+                        <h3 class="card-title">Discussion</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-header">
+                                    <span class="prompt">$</span> echo "Share your thoughts on this article"
+                                </div>
+                                <div class="terminal-content">
+                                    <p>Comments and discussions are welcome! Feel free to reach out via the contact form or social media to share your thoughts on this article.</p>
+                                    <div style="margin-top: 1.5rem;">
+                                        <a href="/contact" class="btn">Leave a Comment</a>
+                                        <a href="#" class="btn btn-secondary" onclick="shareArticle()">Share Article</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </article>
+
+            <!-- Error State -->
+            <div id="error-state" style="display: none;">
+                <div class="card">
+                    <div class="card-content" style="text-align: center;">
+                        <h2 style="color: var(--primary-color);">Article Not Found</h2>
+                        <div class="terminal" style="margin: 2rem 0;">
+                            <div class="terminal-content">
+                                <div><span class="prompt">$</span> ls blog/</div>
+                                <div>ls: cannot access 'blog/<span id="error-slug"></span>.md': No such file or directory</div>
+                            </div>
+                        </div>
+                        <p>The article you're looking for doesn't exist or has been moved.</p>
+                        <div style="margin-top: 2rem;">
+                            <a href="/blog" class="btn">← Back to Blog</a>
+                <a href="/home" class="btn btn-secondary">Go Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 NGUYEN THANH DAT - Technical Support Engineer</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">GitHub</a>
+                    <a href="#" class="social-link">LinkedIn</a>
+                    <a href="#" class="social-link">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        let currentPost = null;
+        let allPosts = [];
+
+        // Load post when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            
+            if (slug) {
+                loadSinglePost(slug);
+            } else {
+                showError('No article specified');
+            }
+        });
+
+        async function loadSinglePost(slug) {
+            try {
+                // Load the specific post
+                const response = await fetch(`api.php?endpoint=article&slug=${encodeURIComponent(slug)}`);
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    currentPost = data.data;
+                    displayPost(currentPost);
+                    
+                    // Load all posts for navigation and related posts
+                    loadAllPostsForNavigation();
+                } else {
+                    showError(slug);
+                }
+            } catch (error) {
+                console.error('Error loading post:', error);
+                showError(slug);
+            }
+        }
+
+        async function loadAllPostsForNavigation() {
+            try {
+                const response = await fetch('api.php?endpoint=articles');
+                const data = await response.json();
+                
+                if (data.success) {
+                    allPosts = data.data;
+                    setupPostNavigation();
+                    setupRelatedPosts();
+                }
+            } catch (error) {
+                console.error('Error loading posts for navigation:', error);
+            }
+        }
+
+        function displayPost(post) {
+            // Update page title and meta
+            document.getElementById('post-title').textContent = post.title + ' - Serein Blog';
+            document.getElementById('post-description').setAttribute('content', 
+                post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 160)
+            );
+            
+            // Update post content
+            document.getElementById('post-slug-display').textContent = post.slug;
+            document.getElementById('post-slug-display-2').textContent = post.slug;
+            document.getElementById('article-title').textContent = post.title;
+            
+            // Post meta information
+            const date = new Date(post.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const readTime = Math.ceil(post.content.split(' ').length / 200);
+            
+            document.getElementById('post-meta').innerHTML = `
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                    <span>📅 Published: ${date}</span>
+                    <span>⏱️ ${readTime} min read</span>
+                    <span>👤 Author: Serein</span>
+                </div>
+            `;
+            
+            // Post content
+            document.getElementById('article-content').innerHTML = post.content;
+            
+            // Tags
+            if (post.tags) {
+                const tags = post.tags.split(',').map(tag => tag.trim());
+                document.getElementById('post-tags').innerHTML = tags.map(tag => 
+                    `<span class="badge">#${tag}</span>`
+                ).join(' ');
+                document.getElementById('post-tags-section').style.display = 'block';
+            }
+            
+            // Show post content and hide loading
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('post-content').style.display = 'block';
+            
+            // Update SEO meta tags
+            updateSEOTags(post);
+        }
+
+        function setupPostNavigation() {
+            if (!currentPost || !allPosts.length) return;
+            
+            const currentIndex = allPosts.findIndex(post => post.slug === currentPost.slug);
+            
+            // Previous post
+            if (currentIndex > 0) {
+                const prevPost = allPosts[currentIndex - 1];
+                document.getElementById('prev-post-title').textContent = prevPost.title;
+                document.getElementById('prev-post-link').href = `post.html?slug=${prevPost.slug}`;
+                document.getElementById('prev-post').style.display = 'block';
+            }
+            
+            // Next post
+            if (currentIndex < allPosts.length - 1) {
+                const nextPost = allPosts[currentIndex + 1];
+                document.getElementById('next-post-title').textContent = nextPost.title;
+                document.getElementById('next-post-link').href = `post.html?slug=${nextPost.slug}`;
+                document.getElementById('next-post').style.display = 'block';
+            }
+        }
+
+        function setupRelatedPosts() {
+            if (!currentPost || !allPosts.length) return;
+            
+            // Find related posts based on tags or category
+            const currentTags = currentPost.tags ? currentPost.tags.split(',').map(t => t.trim().toLowerCase()) : [];
+            
+            const relatedPosts = allPosts
+                .filter(post => post.slug !== currentPost.slug)
+                .filter(post => {
+                    if (!post.tags) return false;
+                    const postTags = post.tags.split(',').map(t => t.trim().toLowerCase());
+                    return currentTags.some(tag => postTags.includes(tag));
+                })
+                .slice(0, 3);
+            
+            if (relatedPosts.length > 0) {
+                let relatedHTML = '<div class="grid grid-3">';
+                
+                relatedPosts.forEach(post => {
+                    const excerpt = post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...';
+                    const date = new Date(post.created_at).toLocaleDateString();
+                    
+                    relatedHTML += `
+                        <div class="card fade-in-up">
+                            <div class="post-meta" style="margin-bottom: 0.5rem; font-size: 0.8rem;">${date}</div>
+                            <h4><a href="post.html?slug=${post.slug}" style="text-decoration: none; color: var(--primary-color);">${post.title}</a></h4>
+                            <div class="card-content">
+                                <p style="font-size: 0.9rem;">${excerpt}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                relatedHTML += '</div>';
+                document.getElementById('related-posts-content').innerHTML = relatedHTML;
+                document.getElementById('related-posts').style.display = 'block';
+            }
+        }
+
+        function updateSEOTags(post) {
+            // Update meta description
+            const description = post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 160);
+            document.getElementById('post-description').setAttribute('content', description);
+            
+            // Update keywords
+            const keywords = post.tags ? 
+                'cybersecurity, ' + post.tags.split(',').map(t => t.trim()).join(', ') : 
+                'cybersecurity, security research, penetration testing';
+            document.getElementById('post-keywords').setAttribute('content', keywords);
+        }
+
+        function showError(slug) {
+            document.getElementById('error-slug').textContent = slug || 'unknown';
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+            
+            // Update page title
+            document.getElementById('post-title').textContent = 'Article Not Found - Serein Blog';
+        }
+
+        function shareArticle() {
+            if (!currentPost) return;
+            
+            const url = window.location.href;
+            const title = currentPost.title;
+            const text = `Check out this cybersecurity article: ${title}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: text,
+                    url: url
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(`${title} - ${url}`).then(() => {
+                    alert('Article link copied to clipboard!');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = `${title} - ${url}`;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Article link copied to clipboard!');
+                });
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                const prevLink = document.getElementById('prev-post-link');
+                if (prevLink && prevLink.href !== '#') {
+                    window.location.href = prevLink.href;
+                }
+            } else if (e.key === 'ArrowRight') {
+                const nextLink = document.getElementById('next-post-link');
+                if (nextLink && nextLink.href !== '#') {
+                    window.location.href = nextLink.href;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Nguyen Thanh Dat Technical Support</title>
+    <meta name="description" content="Get in touch with Nguyen Thanh Dat for technical support, system administration, and database management services.">
+    <meta name="keywords" content="technical support contact, system administration services, database management consulting">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <div class="scroll-progress"></div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/home" class="logo glitch-text">NGUYEN THANH DAT</a>
+            <ul class="nav-menu">
+                <li><a href="/home" class="nav-link">Home</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                    <li><a href="/portfolio" class="nav-link">Portfolio</a></li>
+                <li><a href="/blog" class="nav-link">Blog</a></li>
+                <li><a href="/contact" class="nav-link active">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero parallax" data-speed="0.3">
+            <div class="container">
+                <div class="terminal fade-in-up">
+                    <div class="terminal-header">
+                        <span class="prompt">dat@technical-support:~$</span> <span id="terminal-command">whoami --contact</span>
+                    </div>
+                    <div class="terminal-content">
+                        <h1 class="hero-title glitch-text">Get In Touch</h1>
+                        <p class="hero-subtitle text-secondary">Need technical support? Let's discuss your system administration and database needs.</p>
+                        <div id="terminal-output" class="terminal-output">
+                            <div class="typewriter text-accent">Initializing technical support channel...</div>
+                        <div class="typewriter text-accent">System Status: Online ✓</div>
+                        <div class="typewriter text-accent">Support Level: Premium ✓</div>
+                        <div class="typewriter text-primary">Ready for technical assistance.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form Section -->
+        <section class="contact-section section">
+            <div class="container">
+                <div class="grid grid-2">
+                    <!-- Contact Form -->
+                    <div class="contact-form-container">
+                        <div class="card fade-in-up">
+                            <h2 class="card-title text-uppercase">Send Message</h2>
+                            <div class="card-content">
+                                <form id="contact-form" class="contact-form">
+                                    <div class="form-group mb-3">
+                                        <label for="name" class="text-primary">Name *</label>
+                                        <input type="text" id="name" name="name" required>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="email" class="text-primary">Email *</label>
+                                        <input type="email" id="email" name="email" required>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="company" class="text-primary">Company/Organization</label>
+                                        <input type="text" id="company" name="company">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="service">Service Interest</label>
+                                        <select id="service" name="service">
+                                            <option value="">Select a service...</option>
+                                            <option value="penetration-testing">Penetration Testing</option>
+                                            <option value="vulnerability-assessment">Vulnerability Assessment</option>
+                                            <option value="security-architecture">Security Architecture</option>
+                                            <option value="incident-response">Incident Response</option>
+                                            <option value="security-training">Security Training</option>
+                                            <option value="compliance-audit">Compliance Audit</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="budget">Project Budget</label>
+                                        <select id="budget" name="budget">
+                                            <option value="">Select budget range...</option>
+                                            <option value="under-5k">Under $5,000</option>
+                                            <option value="5k-15k">$5,000 - $15,000</option>
+                                            <option value="15k-50k">$15,000 - $50,000</option>
+                                            <option value="50k-plus">$50,000+</option>
+                                            <option value="discuss">Let's discuss</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="message">Message *</label>
+                                        <textarea id="message" name="message" rows="6" required placeholder="Describe your security requirements, timeline, and any specific concerns..."></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="urgent" name="urgent">
+                                            <span class="checkmark"></span>
+                                            This is an urgent security matter
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="newsletter" name="newsletter">
+                                            <span class="checkmark"></span>
+                                            Subscribe to security updates and insights
+                                        </label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                                        <span class="btn-text">Send Secure Message</span>
+                                        <span class="btn-loading" style="display: none;">Encrypting & Sending...</span>
+                                    </button>
+                                </form>
+                                
+                                <!-- Success Message -->
+                                <div id="success-message" class="success-message" style="display: none;">
+                                    <div class="terminal">
+                                        <div class="terminal-header">
+                                            <span class="prompt">$</span> message_status --check
+                                        </div>
+                                        <div class="terminal-content">
+                                            <div style="color: var(--success-color);">✓ Message sent successfully!</div>
+                                            <div>Your message has been encrypted and transmitted securely.</div>
+                                            <div>Expected response time: 24-48 hours</div>
+                                            <div>Reference ID: <span id="message-id"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Error Message -->
+                                <div id="error-message" class="error-message" style="display: none;">
+                                    <div class="terminal">
+                                        <div class="terminal-header">
+                                            <span class="prompt">$</span> transmission_status --error
+                                        </div>
+                                        <div class="terminal-content">
+                                            <div style="color: var(--error-color);">✗ Transmission failed</div>
+                                            <div id="error-details">Please try again or contact directly via email.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <div class="card fade-in-up">
+                            <h3 class="card-title text-uppercase">Direct Contact</h3>
+                            <div class="card-content">
+                                <div class="terminal">
+                                    <div class="terminal-content">
+                                        <div class="contact-item mb-2">
+                                            <div class="contact-label text-accent">📧 Email:</div>
+                                            <div class="contact-value text-primary">nguyenthanhdat.tech@gmail.com</div>
+                                        </div>
+                                        <div class="contact-item mb-2">
+                                            <div class="contact-label text-accent">📱 Phone:</div>
+                                            <div class="contact-value text-primary">+1 (555) 123-HACK</div>
+                                        </div>
+                                        <div class="contact-item mb-2">
+                                            <div class="contact-label text-accent">🌐 Location:</div>
+                                            <div class="contact-value text-primary">Global Remote</div>
+                                        </div>
+                                        <div class="contact-item mb-2">
+                                            <div class="contact-label text-accent">⏰ Response Time:</div>
+                                            <div class="contact-value text-primary">24-48 hours</div>
+                                        </div>
+                                        <div class="contact-item">
+                                            <div class="contact-label text-accent">🚨 Emergency:</div>
+                                            <div class="contact-value text-primary">support@nguyenthanhdat.tech</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="card-title">Security Notice</h3>
+                            <div class="card-content">
+                                <div class="terminal">
+                                    <div class="terminal-content">
+                                        <p>🔒 All communications are encrypted and handled with strict confidentiality.</p>
+                                        <p>🛡️ For sensitive security matters, consider using our PGP key for additional encryption.</p>
+                                        <p>⚡ Emergency security incidents receive priority response within 2-4 hours.</p>
+                                        <div style="margin-top: 1.5rem;">
+                                            <a href="#" class="btn btn-secondary">Download PGP Key</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="card-title">Social & Professional</h3>
+                            <div class="card-content">
+                                <div class="social-links-vertical">
+                                    <a href="#" class="social-link-item">
+                                        <span class="social-icon">💼</span>
+                                        <span>LinkedIn</span>
+                                    </a>
+                                    <a href="#" class="social-link-item">
+                                        <span class="social-icon">🐙</span>
+                                        <span>GitHub</span>
+                                    </a>
+                                    <a href="#" class="social-link-item">
+                                        <span class="social-icon">🐦</span>
+                                        <span>Twitter</span>
+                                    </a>
+                                    <a href="#" class="social-link-item">
+                                        <span class="social-icon">📺</span>
+                                        <span>YouTube</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 3rem; color: var(--primary-color);">Frequently Asked Questions</h2>
+                <div class="grid grid-2">
+                    <div class="faq-item card">
+                        <h4 class="card-title">How quickly can you respond to security incidents?</h4>
+                        <div class="card-content">
+                            <p>Emergency security incidents receive priority response within 2-4 hours. Standard inquiries are typically answered within 24-48 hours.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item card">
+                        <h4 class="card-title">Do you work with small businesses?</h4>
+                        <div class="card-content">
+                            <p>Absolutely! I provide scalable security solutions for organizations of all sizes, from startups to enterprise-level companies.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item card">
+                        <h4 class="card-title">What information should I include in my message?</h4>
+                        <div class="card-content">
+                            <p>Please describe your security requirements, timeline, current infrastructure, and any specific concerns or compliance requirements.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item card">
+                        <h4 class="card-title">Do you offer remote services?</h4>
+                        <div class="card-content">
+                            <p>Yes, most services can be delivered remotely. For certain assessments, on-site presence may be required, which we can discuss.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 NGUYEN THANH DAT - Technical Support Engineer</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">GitHub</a>
+                    <a href="#" class="social-link">LinkedIn</a>
+                    <a href="#" class="social-link">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // Contact form handling
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            
+            // Hide previous messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                company: formData.get('company'),
+                service: formData.get('service'),
+                budget: formData.get('budget'),
+                message: formData.get('message'),
+                urgent: formData.get('urgent') ? true : false,
+                newsletter: formData.get('newsletter') ? true : false
+            };
+            
+            try {
+                // Send to API
+                const response = await fetch('api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        endpoint: 'contact',
+                        ...data
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    document.getElementById('message-id').textContent = generateMessageId();
+                    successMessage.style.display = 'block';
+                    
+                    // Reset form
+                    this.reset();
+                    
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error(result.message || 'Failed to send message');
+                }
+            } catch (error) {
+                console.error('Contact form error:', error);
+                document.getElementById('error-details').textContent = error.message;
+                errorMessage.style.display = 'block';
+                
+                // Scroll to error message
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            }
+        });
+        
+        // Generate a random message ID for reference
+        function generateMessageId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = 'MSG-';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        // Form validation enhancements
+        const form = document.getElementById('contact-form');
+        const inputs = form.querySelectorAll('input[required], textarea[required]');
+        
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.classList.contains('error')) {
+                    validateField(this);
+                }
+            });
+        });
+        
+        function validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (field.hasAttribute('required') && !value) {
+                isValid = false;
+                errorMessage = 'This field is required';
+            } else if (field.type === 'email' && value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                }
+            }
+            
+            // Remove existing error styling
+            field.classList.remove('error');
+            const existingError = field.parentNode.querySelector('.field-error');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Add error styling if invalid
+            if (!isValid) {
+                field.classList.add('error');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.textContent = errorMessage;
+                errorDiv.style.color = 'var(--error-color)';
+                errorDiv.style.fontSize = '0.8rem';
+                errorDiv.style.marginTop = '0.25rem';
+                field.parentNode.appendChild(errorDiv);
+            }
+            
+            return isValid;
+        }
+        
+        // Terminal animation for hero section
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminalOutput = document.getElementById('terminal-output');
+            const lines = terminalOutput.querySelectorAll('.typewriter-line');
+            
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    line.style.opacity = '1';
+                    line.classList.add('typing-animation');
+                }, index * 800);
+            });
+        });
+    </script>
+</body>
+</html>

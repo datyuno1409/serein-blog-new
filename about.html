@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Nguyen Thanh Dat Technical Support Engineer</title>
+    <meta name="description" content="Learn about Nguyen Thanh Dat's expertise in technical support, system administration, and database management.">
+    <meta name="keywords" content="technical support engineer, system administrator, database management, about nguyen thanh dat">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <div class="scroll-progress"></div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/home" class="logo glitch-text">NGUYEN THANH DAT</a>
+            <ul class="nav-menu">
+                <li><a href="/home" class="nav-link">Home</a></li>
+                    <li><a href="/about" class="nav-link active">About</a></li>
+                    <li><a href="/portfolio" class="nav-link">Portfolio</a></li>
+                <li><a href="/blog" class="nav-link">Blog</a></li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero parallax" data-speed="0.6">
+            <div class="container">
+                <h1 class="hero-title glitch-text mb-4">About NGUYEN THANH DAT</h1>
+                <div class="terminal fade-in-up">
+                    <div class="terminal-header">
+                        <span class="prompt">dat@technical-support:~$</span> cat profile.txt
+                    </div>
+                    <div class="terminal-content">
+                        <div class="loading" id="about-loading"></div>
+                        <div id="about-content" style="display: none;">
+                            <!-- Content will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="container" style="margin-top: 2rem;">
+
+        </div>
+        
+        <!-- Skills Section -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title glitch-text">Technical Arsenal</h2>
+                <div class="terminal fade-in-up">
+                    <div class="terminal-header">
+                        <span class="prompt">serein@security:~$</span> ls -la skills/
+                    </div>
+                    <div class="terminal-content">
+                        <div id="skills-content">
+                            <div class="loading"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Timeline -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title glitch-text">Professional Journey</h2>
+                <div class="terminal fade-in-up">
+                    <div class="terminal-header">
+                        <span class="prompt">serein@security:~$</span> git log --oneline --graph
+                    </div>
+                    <div class="terminal-content">
+                        <div class="text-accent">* 2024-01 Senior Security Consultant - Elite Cybersecurity Firm</div>
+                        <div class="text-accent">* 2023-06 Lead Penetration Tester - TechSecure Solutions</div>
+                        <div class="text-accent">* 2022-03 Security Analyst - CyberDefense Corp</div>
+                        <div class="text-accent">* 2021-01 Junior Security Researcher - InfoSec Labs</div>
+                        <div class="text-accent">* 2020-09 Cybersecurity Intern - SecureNet Inc</div>
+                        <div><span class="prompt">serein@security:~$</span> cat achievements.log</div>
+                        <div class="text-primary">✓ Certified Ethical Hacker (CEH)</div>
+                        <div class="text-primary">✓ Offensive Security Certified Professional (OSCP)</div>
+                        <div class="text-primary">✓ CISSP - Certified Information Systems Security Professional</div>
+                        <div class="text-primary">✓ GCIH - GIAC Certified Incident Handler</div>
+                        <div class="text-primary">✓ Bug Bounty Hunter - 50+ Critical Vulnerabilities</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title glitch-text">Security Methodology</h2>
+                <div class="grid grid-2">
+                    <div class="card fade-in-up">
+                        <h3 class="card-title text-uppercase">Reconnaissance</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-content">
+                                    <div><span class="prompt">$</span> nmap -sS -sV target.com</div>
+                                    <div><span class="prompt">$</span> whois target.com</div>
+                                    <div><span class="prompt">$</span> dig target.com ANY</div>
+                                    <div><span class="prompt">$</span> theHarvester -d target.com</div>
+                                </div>
+                            </div>
+                            <p class="text-secondary">Comprehensive information gathering using OSINT techniques and network scanning.</p>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up">
+                        <h3 class="card-title text-uppercase">Vulnerability Analysis</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-content">
+                                    <div><span class="prompt">$</span> nikto -h target.com</div>
+                                    <div><span class="prompt">$</span> sqlmap -u "url" --dbs</div>
+                                    <div><span class="prompt">$</span> dirb target.com wordlist</div>
+                                    <div><span class="prompt">$</span> burpsuite --scan</div>
+                                </div>
+                            </div>
+                            <p class="text-secondary">Systematic identification of security weaknesses using automated and manual techniques.</p>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up">
+                        <h3 class="card-title text-uppercase">Exploitation</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-content">
+                                    <div><span class="prompt">$</span> msfconsole</div>
+                                    <div><span class="prompt">msf></span> use exploit/multi/handler</div>
+                                    <div><span class="prompt">msf></span> set payload windows/meterpreter</div>
+                                    <div><span class="prompt">msf></span> exploit</div>
+                                </div>
+                            </div>
+                            <p class="text-secondary">Controlled exploitation to demonstrate impact and validate security findings.</p>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up">
+                        <h3 class="card-title text-uppercase">Reporting</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-content">
+                                    <div><span class="prompt">$</span> generate_report.py</div>
+                                    <div><span class="prompt">$</span> risk_assessment --cvss</div>
+                                    <div><span class="prompt">$</span> remediation_plan.sh</div>
+                                    <div><span class="prompt">$</span> executive_summary.md</div>
+                                </div>
+                            </div>
+                            <p class="text-secondary">Detailed documentation with risk ratings, remediation steps, and executive summaries.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact CTA -->
+        <section class="section text-center">
+            <div class="container">
+                <div class="card fade-in-up">
+                    <h2 class="card-title glitch-text">Let's Secure Your Infrastructure</h2>
+                    <div class="card-content">
+                        <p class="text-secondary mb-4">Ready to enhance your security posture? Let's discuss your cybersecurity needs.</p>
+                        <div class="mt-4">
+                            <a href="/contact" class="btn pulse mr-3">Get In Touch</a>
+                <a href="/portfolio" class="btn btn-secondary">View Services</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 NGUYEN THANH DAT - Technical Support Engineer</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">GitHub</a>
+                    <a href="#" class="social-link">LinkedIn</a>
+                    <a href="#" class="social-link">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // Load about data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAboutData();
+        });
+    </script>
+</body>
+</html>

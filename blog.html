@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Nguyen Thanh Dat Tech Knowledge Hub</title>
+    <meta name="description" content="Technical support insights, system administration guides, and troubleshooting tips from Nguyen Thanh Dat's experience.">
+    <meta name="keywords" content="technical support blog, system administration, troubleshooting guides, database management, customer service tips">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <div class="scroll-progress"></div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/home" class="logo glitch-text">NGUYEN THANH DAT</a>
+            <ul class="nav-menu">
+                <li><a href="/home" class="nav-link">Home</a></li>
+                    <li><a href="/about" class="nav-link">About</a></li>
+                    <li><a href="/portfolio" class="nav-link">Portfolio</a></li>
+                <li><a href="/blog" class="nav-link active">Blog</a></li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero parallax" data-speed="0.5">
+            <div class="container">
+                <h1 class="hero-title glitch-text">TECH<br>KNOWLEDGE HUB</h1>
+                <p class="hero-subtitle typewriter fade-in-up">Technical Support Insights & System Administration Guides</p>
+                <div class="terminal fade-in-up">
+                    <div class="terminal-header">
+                        <span class="prompt">dat@technical-support:~$</span> ls -la blog/
+                    </div>
+                    <div class="terminal-content">
+                        <div class="text-accent">drwxr-xr-x 2 dat dat 4096 Jan 15 10:30 technical-support/</div>
+                        <div class="text-accent">drwxr-xr-x 2 dat dat 4096 Jan 14 14:22 system-administration/</div>
+                        <div class="text-accent">drwxr-xr-x 2 dat dat 4096 Jan 13 09:15 troubleshooting-guides/</div>
+                        <div class="text-accent">drwxr-xr-x 2 dat dat 4096 Jan 12 16:45 database-management/</div>
+                        <div class="text-accent">drwxr-xr-x 2 dat dat 4096 Jan 11 11:30 customer-service-tips/</div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <a href="#articles" class="btn pulse">Read Articles</a>
+                    <a href="/contact" class="btn btn-secondary">Get In Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="container" style="margin-top: 2rem;">
+
+            <!-- Blog Categories -->
+            <section style="margin: 3rem 0;">
+                <h2 style="color: var(--primary-color); margin-bottom: 2rem; font-size: 2rem;">CATEGORIES</h2>
+                <div class="grid grid-4">
+                    <div class="card fade-in-up category-card" data-category="all">
+                        <div class="card-content">
+                            <h3 style="color: var(--primary-color);">All Posts</h3>
+                            <p>View all articles</p>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up category-card" data-category="web-development">
+                        <div class="card-content">
+                            <h3 style="color: var(--primary-color);">Web Development</h3>
+                            <p>Frontend & Backend guides</p>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up category-card" data-category="programming-tutorials">
+                        <div class="card-content">
+                            <h3 style="color: var(--primary-color);">Programming Tutorials</h3>
+                            <p>Step-by-step coding guides</p>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up category-card" data-category="tech-insights">
+                        <div class="card-content">
+                            <h3 style="color: var(--primary-color);">Tech Insights</h3>
+                            <p>Industry trends & analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search & Filter -->
+            <section style="margin: 3rem 0;">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="prompt">serein@dev:~$</span> grep -r "search_term" blog/
+                    </div>
+                    <div class="terminal-content">
+                        <input type="text" id="search-input" placeholder="Search articles..." style="background: transparent; border: none; color: var(--text-color); font-family: 'Courier New', monospace; width: 100%; outline: none; font-size: 1rem;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blog Posts -->
+            <section id="articles" class="section" style="margin: 3rem 0;">
+                <div id="blog-posts">
+                    <div class="loading text-center" style="margin: 3rem 0;"></div>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="pagination" style="text-align: center; margin: 3rem 0; display: none;">
+                    <button id="prev-page" class="btn btn-secondary" style="margin: 0 0.5rem;">← Previous</button>
+                    <span id="page-info" style="margin: 0 1rem; color: var(--text-color);"></span>
+                    <button id="next-page" class="btn btn-secondary" style="margin: 0 0.5rem;">Next →</button>
+                </div>
+            </section>
+
+            <!-- Featured Resources -->
+            <section style="margin: 4rem 0;">
+                <h2 style="color: var(--primary-color); margin-bottom: 2rem; font-size: 2rem;">Development Tools & Resources</h2>
+                <div class="grid grid-2">
+                    <div class="card fade-in-up">
+                        <h3 class="card-title">Code Snippets & Utils</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-content">
+                                    <div><span class="prompt">$</span> ls -la snippets/</div>
+                                    <div>-rw-r--r-- 1 serein serein 2048 Jan 15 react-hooks.js</div>
+                                    <div>-rw-r--r-- 1 serein serein 1536 Jan 14 api-helpers.php</div>
+                                    <div>-rw-r--r-- 1 serein serein 3072 Jan 13 css-animations.css</div>
+                                    <div>-rw-r--r-- 1 serein serein 2560 Jan 12 python-utils.py</div>
+                                </div>
+                            </div>
+                            <p>Collection of useful code snippets and development utilities.</p>
+                            <a href="#" class="btn">View Repository</a>
+                        </div>
+                    </div>
+                    <div class="card fade-in-up">
+                        <h3 class="card-title">Learning Resources</h3>
+                        <div class="card-content">
+                            <div class="terminal">
+                                <div class="terminal-content">
+                                    <div><span class="prompt">$</span> cat resources/</div>
+                                    <div>📚 Web Development Roadmap</div>
+                                    <div>📚 JavaScript Best Practices Guide</div>
+                                    <div>📚 Database Design Patterns</div>
+                                    <div>📚 API Development Handbook</div>
+                                </div>
+                            </div>
+                            <p>Comprehensive learning guides and development resources.</p>
+                            <a href="#" class="btn">Download Resources</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Newsletter Signup -->
+            <section style="margin: 4rem 0; text-align: center;">
+                <div class="card">
+                    <h2 class="card-title">Stay Updated</h2>
+                    <div class="card-content">
+                        <p>Subscribe to receive the latest programming tutorials and tech insights directly in your inbox.</p>
+                        <div class="terminal" style="margin: 2rem 0;">
+                            <div class="terminal-header">
+                                <span class="prompt">$</span> subscribe --newsletter tech-insights
+                            </div>
+                            <div class="terminal-content">
+                                <form id="newsletter-form" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: center;">
+                                    <input type="email" id="newsletter-email" placeholder="your.email@domain.com" required style="background: transparent; border: 1px solid var(--primary-color); color: var(--text-color); padding: 0.5rem 1rem; font-family: 'Courier New', monospace; flex: 1; min-width: 250px;">
+                                    <button type="submit" class="btn">Subscribe</button>
+                                </form>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">No spam, unsubscribe anytime. Privacy policy compliant.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 NGUYEN THANH DAT - Technical Support Engineer</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">GitHub</a>
+                    <a href="#" class="social-link">LinkedIn</a>
+                    <a href="#" class="social-link">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let allPosts = [];
+        let filteredPosts = [];
+        let currentCategory = 'all';
+        const postsPerPage = 6;
+
+        // Load blog posts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBlogPosts();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Category filter
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    filterByCategory(category);
+                    
+                    // Update active category
+                    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    filterPosts(searchTerm);
+                });
+            }
+
+            // Pagination
+            document.getElementById('prev-page')?.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayPosts();
+                }
+            });
+
+            document.getElementById('next-page')?.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayPosts();
+                }
+            });
+
+            // Newsletter form
+            document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('newsletter-email').value;
+                
+                // Simulate newsletter signup
+                alert('Thank you for subscribing! You will receive security insights at ' + email);
+                this.reset();
+            });
+        }
+
+        async function loadBlogPosts() {
+            try {
+                const response = await fetch('api.php?endpoint=articles');
+                const data = await response.json();
+                
+                if (data.success) {
+                    allPosts = data.data;
+                    filteredPosts = [...allPosts];
+                    calculatePagination();
+                    displayPosts();
+                } else {
+                    document.getElementById('blog-posts').innerHTML = '<div class="card"><p>No blog posts available yet.</p></div>';
+                }
+            } catch (error) {
+                console.error('Error loading blog posts:', error);
+                document.getElementById('blog-posts').innerHTML = '<div class="card"><p>Error loading blog posts.</p></div>';
+            }
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            if (category === 'all') {
+                filteredPosts = [...allPosts];
+            } else {
+                filteredPosts = allPosts.filter(post => 
+                    post.category === category || 
+                    post.tags?.includes(category) ||
+                    post.title.toLowerCase().includes(category.replace('-', ' '))
+                );
+            }
+            currentPage = 1;
+            calculatePagination();
+            displayPosts();
+        }
+
+        function filterPosts(searchTerm) {
+            if (!searchTerm) {
+                filterByCategory(currentCategory);
+                return;
+            }
+
+            filteredPosts = allPosts.filter(post => 
+                post.title.toLowerCase().includes(searchTerm) ||
+                post.content.toLowerCase().includes(searchTerm) ||
+                (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm))
+            );
+            
+            currentPage = 1;
+            calculatePagination();
+            displayPosts();
+        }
+
+        function calculatePagination() {
+            totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+        }
+
+        function displayPosts() {
+            const blogPostsContainer = document.getElementById('blog-posts');
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const postsToShow = filteredPosts.slice(startIndex, endIndex);
+
+            if (postsToShow.length === 0) {
+                blogPostsContainer.innerHTML = '<div class="card"><p>No posts found matching your criteria.</p></div>';
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+
+            let postsHTML = '<div class="grid grid-2">';
+            
+            postsToShow.forEach(post => {
+                const excerpt = post.excerpt || (post.content || '').replace(/<[^>]*>/g, '').substring(0, 200) + '...';
+                const date = new Date(post.created_at).toLocaleDateString();
+                const readTime = Math.ceil((post.content || '').split(' ').length / 200); // Estimate reading time
+                
+                postsHTML += `
+                    <div class="card fade-in-up blog-post-card">
+                        <div class="post-meta" style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                            <span>📅 ${date}</span>
+                            <span style="margin-left: 1rem;">⏱️ ${readTime} min read</span>
+                        </div>
+                        <h3><a href="post.html?slug=${post.slug}" class="card-title" style="text-decoration: none;">${post.title}</a></h3>
+                        <div class="card-content">
+                            <p>${excerpt}</p>
+                            <div style="margin: 1rem 0;">
+                                ${post.tags ? post.tags.split(',').map(tag => `<span class="badge">${tag.trim()}</span>`).join(' ') : ''}
+                            </div>
+                            <a href="post.html?slug=${post.slug}" class="btn">Read Full Article →</a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            postsHTML += '</div>';
+            blogPostsContainer.innerHTML = postsHTML;
+
+            // Update pagination
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            const pageInfo = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+
+            pagination.style.display = 'block';
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            prevBtn.style.opacity = currentPage === 1 ? '0.5' : '1';
+            nextBtn.style.opacity = currentPage === totalPages ? '0.5' : '1';
+        }
+    </script>
+</body>
+</html>

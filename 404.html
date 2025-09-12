@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Trang không tìm thấy | Serein</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .error-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #ff4757;
+            text-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+            }
+            to {
+                text-shadow: 0 0 50px rgba(255, 71, 87, 0.8), 0 0 60px rgba(255, 71, 87, 0.6);
+            }
+        }
+
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2ed573;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: #a4b0be;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .terminal-box {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27ca3f; }
+
+        .terminal-title {
+            margin-left: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .terminal-content {
+            color: #2ed573;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .error-line {
+            color: #ff4757;
+        }
+
+        .warning-line {
+            color: #ffa502;
+        }
+
+        .info-line {
+            color: #70a1ff;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(45deg, #2ed573, #1dd1a1);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+            cursor: pointer;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 213, 115, 0.4);
+            background: linear-gradient(45deg, #1dd1a1, #2ed573);
+        }
+
+        .home-button:active {
+            transform: translateY(0);
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.1;
+        }
+
+        .floating-code {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            color: #2ed573;
+            font-size: 0.8rem;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 5rem;
+            }
+            
+            .error-title {
+                font-size: 1.8rem;
+            }
+            
+            .error-container {
+                padding: 1rem;
+            }
+            
+            .terminal-box {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="floating-code" style="left: 10%; animation-delay: 0s;">404.html</div>
+        <div class="floating-code" style="left: 20%; animation-delay: 2s;">index.php</div>
+        <div class="floating-code" style="left: 30%; animation-delay: 4s;">router.php</div>
+        <div class="floating-code" style="left: 40%; animation-delay: 6s;">config.php</div>
+        <div class="floating-code" style="left: 50%; animation-delay: 8s;">database.php</div>
+        <div class="floating-code" style="left: 60%; animation-delay: 10s;">models/</div>
+        <div class="floating-code" style="left: 70%; animation-delay: 12s;">admin/</div>
+        <div class="floating-code" style="left: 80%; animation-delay: 14s;">assets/</div>
+        <div class="floating-code" style="left: 90%; animation-delay: 16s;">api.php</div>
+    </div>
+
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">ACCESS DENIED</h1>
+        <p class="error-message">
+            Trang bạn đang tìm kiếm không tồn tại trong hệ thống.<br>
+            Có thể đường dẫn đã bị thay đổi hoặc trang đã bị xóa.
+        </p>
+
+        <div class="terminal-box">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="terminal-title">serein@localhost:~/error</div>
+            </div>
+            <div class="terminal-content">
+                <div class="error-line">ERROR 404: Page not found</div>
+                <div class="warning-line">WARNING: Invalid route detected</div>
+                <div class="info-line">INFO: Redirecting to homepage...</div>
+                <div>STATUS: Ready for redirect</div>
+                <div class="info-line">SUGGESTION: Check URL or return home</div>
+                <div>SYSTEM: Serein Blog v1.0</div>
+            </div>
+        </div>
+
+        <a href="/" class="home-button">
+            <span>🏠</span>
+            Trở về trang chủ
+        </a>
+    </div>
+
+    <script>
+        // Add some interactive effects
+        document.addEventListener('mousemove', function(e) {
+            const cursor = document.createElement('div');
+            cursor.style.position = 'fixed';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.width = '4px';
+            cursor.style.height = '4px';
+            cursor.style.background = '#2ed573';
+            cursor.style.borderRadius = '50%';
+            cursor.style.pointerEvents = 'none';
+            cursor.style.zIndex = '9999';
+            cursor.style.opacity = '0.7';
+            cursor.style.transition = 'opacity 0.5s ease';
+            
+            document.body.appendChild(cursor);
+            
+            setTimeout(() => {
+                cursor.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(cursor);
+                }, 500);
+            }, 100);
+        });
+
+        // Auto redirect after 10 seconds
+        setTimeout(() => {
+            const button = document.querySelector('.home-button');
+            button.style.animation = 'pulse 1s infinite';
+            button.innerHTML = '<span>🏠</span> Tự động chuyển hướng sau 5s...';
+            
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 5000);
+        }, 10000);
+    </script>
+
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</body>
+</html>
