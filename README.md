@@ -1,11 +1,8 @@
 # Serein Blog Platform
 
 ## Mô tả dự án
-* lưu ý: Sản phẩm này hoàn toàn do AI tạo ra. nhằm mục đích thử nghiệm tính logic, học thuật,... 
+
 Serein Blog Platform là một hệ thống blog cá nhân hiện đại được thiết kế dành cho các chuyên gia kỹ thuật và lập trình viên. Dự án cung cấp một nền tảng hoàn chỉnh để chia sẻ kiến thức, kinh nghiệm và dự án cá nhân với giao diện terminal-style độc đáo và hiệu ứng hacker-style ấn tượng.
-<img width="1048" height="921" alt="image" src="https://github.com/user-attachments/assets/9553e648-d1af-4ab6-a3cd-bf63fe0ae20c" />
-<img width="1870" height="923" alt="image" src="https://github.com/user-attachments/assets/11b15d7d-0af6-4053-9359-0491010ab57d" />
-<img width="1875" height="924" alt="image" src="https://github.com/user-attachments/assets/274ce219-b00f-4496-90a2-aaf00d0221cd" />
 
 ## Tính năng nổi bật
 
@@ -44,7 +41,7 @@ Serein Blog Platform là một hệ thống blog cá nhân hiện đại đượ
 
 1. **Clone dự án**
    ```bash
-   git clone https://github.com/datyuno1409/serein-blog.git
+   git clone https://github.com/your-username/serein-blog.git
    cd serein-blog
    ```
 
@@ -67,9 +64,9 @@ Serein Blog Platform là một hệ thống blog cá nhân hiện đại đượ
    ```
 
 5. **Truy cập admin panel**
-   - URL: `http://localhost:8000/admin`
+   - URL: `http://your-domain.com/admin`
    - Tạo tài khoản admin đầu tiên
-   admin / admin123
+
 ## Cấu trúc thư mục
 
 ```
@@ -158,12 +155,34 @@ serein-blog-new/
 2. Cập nhật JavaScript trong `assets/js/`
 3. Sử dụng file minified cho production
 
+## Đóng góp và Phát triển
+
+### Báo cáo lỗi
+Nếu bạn phát hiện lỗi, vui lòng tạo issue trên GitHub với thông tin:
+- Mô tả chi tiết lỗi
+- Các bước tái hiện
+- Screenshots (nếu có)
+- Thông tin môi trường (PHP version, OS, browser)
+
+### Đóng góp code
+1. Fork repository
+2. Tạo branch mới cho feature
+3. Commit changes với message rõ ràng
+4. Tạo Pull Request
+5. Đợi review và merge
+
+### Coding Standards
+- Sử dụng PSR-4 autoloading
+- Comment code bằng tiếng Anh
+- Tuân thủ naming conventions
+- Viết unit tests cho features mới
+
 ## Thông tin liên hệ
 
 **Tác giả**: Nguyen Thanh Dat  
-**Email**: ngthanhdat.fudn@gmail.com  
-**GitHub**: [github.com/datyuno1409](https://github.com/)  
-**Website**: [serein-new](https://serein-new.netlify.app)  
+**Email**: dat.nguyen.tech@gmail.com  
+**GitHub**: [github.com/your-username](https://github.com/your-username)  
+**Website**: [your-website.com](https://your-website.com)  
 
 ## License
 
