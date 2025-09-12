@@ -183,9 +183,9 @@ Nếu bạn phát hiện lỗi, vui lòng tạo issue trên GitHub với thông 
 ## Thông tin liên hệ
 
 **Tác giả**: Nguyen Thanh Dat  
-**Email**: dat.nguyen.tech@gmail.com  
-**GitHub**: [github.com/your-username](https://github.com/your-username)  
-**Website**: [your-website.com](https://your-website.com)  
+**Email**: ngthanhdat.fudn@gmail.com  
+**GitHub**: [github.com/datyuno1409](https://github.com/)  
+**Website**: [serein-new](https://serein-new.netlify.app)  
 
 ## License
 
