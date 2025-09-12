@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Area - Không khả dụng | SEREIN</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .admin-notice {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+        }
+        .admin-notice h1 {
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+        .admin-notice p {
+            color: #ffffff;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .admin-notice .highlight {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #00ff88;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #00cc6a;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-notice">
+        <h1>🚫 Admin Area Không Khả Dụng</h1>
+        <p>Xin chào! Bạn đang cố gắng truy cập vào khu vực quản trị của website.</p>
+        <p>Tuy nhiên, <span class="highlight">Netlify chỉ hỗ trợ hosting static files</span> (HTML, CSS, JS) và không thể chạy các ứng dụng PHP với database.</p>
+        
+        <h3 style="color: #00ff88; margin-top: 30px;">Tại sao không thể truy cập?</h3>
+        <p>• Admin area sử dụng <span class="highlight">PHP và MySQL database</span></p>
+        <p>• Netlify chỉ hỗ trợ <span class="highlight">static hosting</span></p>
+        <p>• Cần server hỗ trợ PHP như <span class="highlight">VPS, Shared hosting, hoặc Heroku</span></p>
+        
+        <h3 style="color: #00ff88; margin-top: 30px;">Giải pháp:</h3>
+        <p>1. Sử dụng <span class="highlight">VPS/Cloud server</span> với LAMP/LEMP stack</p>
+        <p>2. Hosting PHP như <span class="highlight">000webhost, InfinityFree</span></p>
+        <p>3. Chuyển sang <span class="highlight">Headless CMS</span> như Strapi, Sanity</p>
+        <p>4. Sử dụng <span class="highlight">Netlify Functions</span> với serverless backend</p>
+        
+        <a href="/" class="back-btn">← Quay về trang chủ</a>
+    </div>
+</body>
+</html>

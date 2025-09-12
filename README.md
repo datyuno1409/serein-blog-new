@@ -1,5 +1,151 @@
 # Serein Blog Platform
 
+## 🌟 Giới thiệu
+Serein là một blog platform hiện đại với giao diện terminal-style độc đáo, được thiết kế để showcase portfolio và blog cá nhân.
+
+## 🚀 Demo
+- **Live Demo**: [https://serein-new.netlify.app](https://serein-new.netlify.app)
+- **Static Version**: Chỉ bao gồm frontend (HTML/CSS/JS)
+
+## ⚠️ Lưu ý quan trọng về Netlify Deployment
+
+### Tại sao Admin Area không hoạt động trên Netlify?
+
+**Netlify chỉ hỗ trợ static hosting**, không thể chạy:
+- ❌ PHP backend
+- ❌ MySQL database
+- ❌ Server-side processing
+- ❌ Admin panel
+- ❌ API endpoints
+
+### Các tính năng hoạt động trên Netlify:
+- ✅ Frontend pages (HTML/CSS/JS)
+- ✅ Responsive design
+- ✅ Clean URLs
+- ✅ Static content
+- ✅ Portfolio showcase
+
+### Các tính năng KHÔNG hoạt động trên Netlify:
+- ❌ `/admin/*` - Admin panel
+- ❌ `/api.php` - API endpoints
+- ❌ Database operations
+- ❌ User authentication
+- ❌ Dynamic content management
+
+## 🛠️ Deployment Options
+
+### 1. Static Hosting (Netlify - Hiện tại)
+```bash
+# Chỉ frontend, không có admin
+git push origin main
+# Auto deploy to Netlify
+```
+
+### 2. Full Stack Hosting (Cần PHP + MySQL)
+**Recommended providers:**
+- **VPS**: DigitalOcean, Linode, Vultr
+- **Shared Hosting**: Hostinger, SiteGround
+- **Cloud**: AWS EC2, Google Cloud
+
+```bash
+# Upload toàn bộ project
+# Cấu hình database
+# Import serein.sql
+# Cấu hình web server (Apache/Nginx)
+```
+
+### 3. Serverless Migration (Tương lai)
+- Convert PHP API to Netlify Functions
+- Use headless CMS (Strapi, Sanity)
+- JAMstack architecture
+
+## 📁 Project Structure
+
+```
+serein-blog-new/
+├── 📄 Static Pages (Hoạt động trên Netlify)
+│   ├── index.html          # Trang chủ
+│   ├── about.html          # Giới thiệu
+│   ├── blog.html           # Blog listing
+│   ├── post.html           # Blog post
+│   ├── services.html       # Portfolio
+│   └── 404.html           # Error page
+│
+├── 🎨 Assets
+│   ├── assets/css/         # Stylesheets
+│   ├── assets/js/          # JavaScript
+│   └── assets/images/      # Images
+│
+├── ⚙️ Backend (KHÔNG hoạt động trên Netlify)
+│   ├── admin/              # Admin panel (PHP)
+│   ├── api/                # API endpoints (PHP)
+│   ├── config/             # Database config
+│   ├── models/             # Data models
+│   └── docs/serein.sql     # Database schema
+│
+└── 🔧 Config Files
+    ├── netlify.toml        # Netlify configuration
+    ├── _redirects          # URL redirects
+    ├── .htaccess          # Apache config (local)
+    └── router.php         # PHP router (local)
+```
+
+## 🔧 Local Development
+
+### Prerequisites
+- PHP 7.4+
+- MySQL 5.7+
+- Web server (Apache/Nginx)
+
+### Setup
+```bash
+# Clone repository
+git clone <repository-url>
+cd serein-blog-new
+
+# Import database
+mysql -u root -p serein < docs/serein.sql
+
+# Start PHP server
+php -S localhost:8000 router.php
+
+# Access
+# Frontend: http://localhost:8000
+# Admin: http://localhost:8000/admin
+```
+
+## 🌐 URLs
+
+### Production (Netlify)
+- **Homepage**: https://serein-new.netlify.app/
+- **About**: https://serein-new.netlify.app/about
+- **Portfolio**: https://serein-new.netlify.app/portfolio
+- **Blog**: https://serein-new.netlify.app/blog
+- **Admin**: ❌ Không khả dụng (hiển thị thông báo)
+
+### Local Development
+- **Homepage**: http://localhost:8000/
+- **Admin**: http://localhost:8000/admin/
+- **API**: http://localhost:8000/api.php
+
+## 🚀 Migration to Full Stack
+
+Nếu bạn muốn sử dụng đầy đủ tính năng admin:
+
+1. **Chọn hosting hỗ trợ PHP**
+2. **Upload toàn bộ project**
+3. **Tạo database và import SQL**
+4. **Cấu hình database connection**
+5. **Setup web server**
+
+## 📞 Support
+
+Nếu cần hỗ trợ migration hoặc setup full stack, vui lòng liên hệ.
+
+---
+
+**Made with ❤️ by SEREIN**
+
 ## Mô tả dự án
 
 Serein Blog Platform là một hệ thống blog cá nhân hiện đại được thiết kế dành cho các chuyên gia kỹ thuật và lập trình viên. Dự án cung cấp một nền tảng hoàn chỉnh để chia sẻ kiến thức, kinh nghiệm và dự án cá nhân với giao diện terminal-style độc đáo và hiệu ứng hacker-style ấn tượng.

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API - Không khả dụng | SEREIN</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .api-notice {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: rgba(255, 136, 0, 0.1);
+            border: 1px solid #ff8800;
+            border-radius: 10px;
+        }
+        .api-notice h1 {
+            color: #ff8800;
+            margin-bottom: 20px;
+        }
+        .api-notice p {
+            color: #ffffff;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .api-notice .highlight {
+            color: #ff8800;
+            font-weight: bold;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ff8800;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #cc6600;
+        }
+    </style>
+</head>
+<body>
+    <div class="api-notice">
+        <h1>⚠️ API Không Khả Dụng</h1>
+        <p>Bạn đang cố gắng truy cập vào API endpoints của website.</p>
+        <p>Tuy nhiên, <span class="highlight">Netlify không hỗ trợ PHP backend</span> nên các API endpoints không thể hoạt động.</p>
+        
+        <h3 style="color: #ff8800; margin-top: 30px;">API hiện tại sử dụng:</h3>
+        <p>• <span class="highlight">PHP với MySQL database</span></p>
+        <p>• <span class="highlight">RESTful API endpoints</span></p>
+        <p>• <span class="highlight">Session management</span></p>
+        
+        <h3 style="color: #ff8800; margin-top: 30px;">Để sử dụng API:</h3>
+        <p>1. Deploy lên <span class="highlight">server hỗ trợ PHP</span></p>
+        <p>2. Sử dụng <span class="highlight">Netlify Functions</span></p>
+        <p>3. Chuyển sang <span class="highlight">Node.js API</span></p>
+        <p>4. Sử dụng <span class="highlight">Serverless functions</span></p>
+        
+        <a href="/" class="back-btn">← Quay về trang chủ</a>
+    </div>
+</body>
+</html>
