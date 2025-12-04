@@ -1,14 +1,28 @@
 from logging.config import fileConfig
+import sys
+import os
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
 
-# Import your models and config
-from config import settings
-from database import Base
-from models import *  # Import all models
+# Import your models and config from backend
+from backend.config import settings
+from backend.database import Base
+# Import all model classes to ensure they're registered with Base.metadata
+from backend.models.user import User
+from backend.models.article import Article
+from backend.models.project import Project
+from backend.models.about import About
+from backend.models.skill import Skill
+from backend.models.social_link import SocialLink
+from backend.models.testimonial import Testimonial
+from backend.models.seo_setting import SEOSetting
+from backend.models.setting import Setting
 
 # this is the Alembic Config object
 config = context.config
