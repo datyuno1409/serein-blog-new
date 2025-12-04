@@ -1,10 +1,16 @@
 """
 Script to create initial admin user
+Run from project root: python -m scripts.create_admin
 """
 import sys
+import os
 from getpass import getpass
-from database import SessionLocal
-from models.user import User, UserRole
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from backend.database import SessionLocal
+from backend.models.user import User, UserRole
 
 
 def create_admin():

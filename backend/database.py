@@ -1,11 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from config import settings
+from .config import settings
 
-# Create database engine
+# Create database engine with SQLite support
+connect_args = {}
+if settings.database_url.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+
 engine = create_engine(
     settings.database_url,
+    connect_args=connect_args,
     pool_pre_ping=True,
     echo=settings.environment == "development"
 )

@@ -9,10 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
-from config import settings
-from database import engine, get_db, Base
-from api import api_router
-from models import *  # Import all models to create tables
+from .config import settings
+from .database import engine, get_db, Base
+from .api import api_router
+from . import models  # Import all models to create tables
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
