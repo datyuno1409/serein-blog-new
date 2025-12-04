@@ -1,229 +1,220 @@
-# Serein Blog Platform
+# Serein Blog Platform - Python/FastAPI Version
 
-> Modern terminal-style blog platform với giao diện hacker-style độc đáo
+> Modern terminal-style blog platform with FastAPI backend and PostgreSQL database
 
-## 🚀 Demo
-- **Live**: [serein-new.netlify.app](https://serein-new.netlify.app)
-- **GitHub**: [datyuno1409/serein-blog-new](https://github.com/datyuno1409/serein-blog-new)
+## 🚀 Quick Start
 
-## ⚡ Quick Start
+### Prerequisites
+- Python 3.11+
+- PostgreSQL 14+
+- pip or poetry
+
+### Installation
 
 ```bash
-# Clone & Setup
+# Clone repository
 git clone https://github.com/datyuno1409/serein-blog-new.git
 cd serein-blog-new
 
-# Local Development (PHP + MySQL)
-php -S localhost:8000 router.php
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Static Deployment (Netlify)
-git push origin main
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup environment variables
+cp .env.example .env
+# Edit .env with your database credentials
+
+# Run database migrations
+alembic upgrade head
+
+# Create admin user (optional)
+python scripts/create_admin.py
+
+# Run development server
+uvicorn app:app --reload
+```
+
+Visit: http://localhost:8000
+
+## 📁 Project Structure
+
+```
+serein-blog-new/
+├── app.py                 # Main FastAPI application
+├── config.py              # Configuration management
+├── database.py            # Database connection
+├── auth.py                # Authentication utilities
+├── schemas.py             # Pydantic schemas
+├── models/                # SQLAlchemy models
+│   ├── user.py
+│   ├── article.py
+│   ├── project.py
+│   └── ...
+├── api/                   # API endpoints
+│   ├── auth.py
+│   ├── articles.py
+│   ├── projects.py
+│   └── ...
+├── admin/                 # Admin panel (AdminLTE3)
+├── assets/                # Frontend assets
+├── templates/             # Jinja2 templates
+└── requirements.txt       # Python dependencies
 ```
 
 ## 🎯 Features
 
+- ✅ **FastAPI Backend** - High-performance async API
+- ✅ **PostgreSQL Database** - Production-ready database
+- ✅ **JWT Authentication** - Secure token-based auth
+- ✅ **AdminLTE3 Interface** - Modern admin panel
+- ✅ **RESTful API** - Complete CRUD operations
+- ✅ **Auto Documentation** - Swagger UI at `/api/docs`
 - ✅ **Terminal UI** - Matrix rain effects, typewriter animation
-- ✅ **Responsive** - Mobile-first design
-- ✅ **Static Ready** - Works on Netlify/Vercel
-- ❌ **Admin Panel** - Requires PHP hosting (VPS/Shared)
+- ✅ **Responsive Design** - Mobile-first approach
 
-## 📁 Structure
+## 🔧 API Endpoints
 
-```
-├── index.html, about.html, blog.html    # Static pages
-├── assets/css/, assets/js/               # Frontend assets
-├── admin/, api/, config/, models/        # PHP backend
-└── netlify.toml, _redirects              # Deploy config
-```
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login and get token
+- `GET /api/auth/me` - Get current user
 
-## 🔧 Hosting
+### Articles
+- `GET /api/articles` - List articles
+- `POST /api/articles` - Create article (admin)
+- `PUT /api/articles/{id}` - Update article (admin)
+- `DELETE /api/articles/{id}` - Delete article (admin)
 
-| Platform | Frontend | Admin | Database |
-|----------|----------|-------|-----------|
-| **Netlify** | ✅ | ❌ | ❌ |
-| **VPS/Cloud** | ✅ | ✅ | ✅ |
-| **Shared Hosting** | ✅ | ✅ | ✅ |
+### Projects
+- `GET /api/projects` - List projects
+- `POST /api/projects` - Create project (admin)
+- `PUT /api/projects/{id}` - Update project (admin)
+- `DELETE /api/projects/{id}` - Delete project (admin)
 
-**Note**: Admin area cần PHP + MySQL. Netlify chỉ hỗ trợ static files.
+**Full API Documentation**: http://localhost:8000/api/docs
 
----
-**Made with ❤️ by SEREIN**
+## 🗄️ Database Setup
 
-## Mô tả dự án
+### PostgreSQL
 
-Serein Blog Platform là một hệ thống blog cá nhân hiện đại được thiết kế dành cho các chuyên gia kỹ thuật và lập trình viên. Dự án cung cấp một nền tảng hoàn chỉnh để chia sẻ kiến thức, kinh nghiệm và dự án cá nhân với giao diện terminal-style độc đáo và hiệu ứng hacker-style ấn tượng.
+```bash
+# Create database
+createdb serein_db
 
-## Tính năng nổi bật
-
-### 🚀 Giao diện và Trải nghiệm
-- **Terminal-style UI**: Giao diện mô phỏng terminal với hiệu ứng typewriter
-- **Matrix Rain Effect**: Hiệu ứng mưa matrix và particle system
-- **Responsive Design**: Tương thích hoàn hảo trên mọi thiết bị
-- **Dark Theme**: Chủ đề tối chuyên nghiệp với màu sắc neon
-
-### 📝 Quản lý Nội dung
-- **Blog Management**: Hệ thống quản lý bài viết với editor WYSIWYG
-- **Project Portfolio**: Showcase các dự án cá nhân
-- **SEO Optimization**: Tối ưu hóa SEO tự động
-- **Draft System**: Lưu bản nháp tự động
-
-### 🔧 Tính năng Kỹ thuật
-- **Admin Dashboard**: Bảng điều khiển quản trị viên đầy đủ
-- **API RESTful**: API hoàn chỉnh cho tất cả chức năng
-- **Database Management**: Quản lý cơ sở dữ liệu MySQL
-- **Security Features**: Bảo mật với CSRF protection, rate limiting
-
-### 📊 Analytics và Tối ưu
-- **Performance Optimized**: File CSS/JS đã được nén
-- **Clean Architecture**: Cấu trúc MVC rõ ràng
-- **Modular Design**: Thiết kế module hóa dễ mở rộng
-
-## Hướng dẫn cài đặt
-
-### Yêu cầu hệ thống
-- PHP 7.4 trở lên
-- MySQL 5.7 trở lên
-- Web server (Apache/Nginx)
-- Composer (tùy chọn)
-
-### Các bước cài đặt
-
-1. **Clone dự án**
-   ```bash
-   git clone https://github.com/your-username/serein-blog.git
-   cd serein-blog
-   ```
-
-2. **Cấu hình cơ sở dữ liệu**
-   - Tạo database MySQL mới
-   - Import file `docs/serein.sql`
-   - Cập nhật thông tin kết nối trong `config/database.php`
-
-3. **Cấu hình web server**
-   - Đặt document root tới thư mục dự án
-   - Đảm bảo mod_rewrite được bật (Apache)
-
-4. **Khởi chạy dự án**
-   ```bash
-   # Sử dụng PHP built-in server (development)
-   php -S localhost:8000 router.php
-   
-   # Hoặc truy cập qua web server
-   http://your-domain.com
-   ```
-
-5. **Truy cập admin panel**
-   - URL: `http://your-domain.com/admin`
-   - Tạo tài khoản admin đầu tiên
-
-## Cấu trúc thư mục
-
-```
-serein-blog-new/
-├── admin/                  # Admin panel
-│   ├── css/               # Admin styles
-│   ├── js/                # Admin scripts
-│   ├── includes/          # Admin components
-│   └── *.php             # Admin pages
-├── api/                   # API endpoints
-├── assets/                # Frontend assets
-│   ├── css/              # Stylesheets
-│   │   ├── style.css     # Main stylesheet
-│   │   └── style.min.css # Minified version
-│   ├── js/               # JavaScript files
-│   │   ├── script.js     # Main script
-│   │   └── script.min.js # Minified version
-│   └── images/           # Image assets
-├── config/                # Configuration files
-│   ├── database.php      # Database config
-│   ├── CSRF.php          # CSRF protection
-│   └── *.php            # Other configs
-├── docs/                  # Documentation
-│   ├── serein.sql        # Database schema
-│   └── *.pdf            # Documents
-├── models/                # Data models
-│   ├── Article.php       # Article model
-│   ├── Project.php       # Project model
-│   └── *.php            # Other models
-├── *.html                 # Frontend pages
-├── api.php               # Main API handler
-├── router.php            # URL router
-└── README.md             # This file
+# Or using psql
+psql -U postgres
+CREATE DATABASE serein_db;
 ```
 
-## Công nghệ sử dụng
+### Migrations
+
+```bash
+# Create migration
+alembic revision --autogenerate -m "description"
+
+# Apply migrations
+alembic upgrade head
+
+# Rollback
+alembic downgrade -1
+```
+
+## 🚀 Deployment
+
+### VPS Deployment
+
+```bash
+# Install dependencies
+sudo apt update
+sudo apt install python3.11 python3-pip postgresql nginx
+
+# Setup PostgreSQL
+sudo -u postgres createdb serein_db
+
+# Clone and setup
+git clone https://github.com/datyuno1409/serein-blog-new.git
+cd serein-blog-new
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+nano .env  # Edit with production settings
+
+# Run with Gunicorn
+pip install gunicorn
+gunicorn app:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+
+# Setup systemd service (optional)
+sudo nano /etc/systemd/system/serein.service
+```
+
+### Nginx Configuration
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /assets {
+        alias /path/to/serein-blog-new/assets;
+    }
+}
+```
+
+## 🔐 Security
+
+- JWT token authentication
+- Password hashing with bcrypt
+- CORS protection
+- SQL injection prevention (SQLAlchemy ORM)
+- Input validation (Pydantic)
+
+## 📊 Tech Stack
 
 ### Backend
-- **PHP 7.4+**: Ngôn ngữ lập trình chính
-- **MySQL**: Cơ sở dữ liệu
-- **PDO**: Database abstraction layer
-- **Custom MVC**: Kiến trúc MVC tự xây dựng
+- **FastAPI** - Modern Python web framework
+- **SQLAlchemy** - ORM for database
+- **PostgreSQL** - Production database
+- **Pydantic** - Data validation
+- **python-jose** - JWT tokens
+- **passlib** - Password hashing
 
 ### Frontend
-- **HTML5/CSS3**: Markup và styling
-- **Vanilla JavaScript**: Không sử dụng framework
-- **Fira Code Font**: Font monospace chuyên nghiệp
-- **CSS Grid/Flexbox**: Layout hiện đại
+- **HTML5/CSS3** - Structure and styling
+- **Vanilla JavaScript** - No framework
+- **AdminLTE3** - Admin panel theme
+- **Font Awesome** - Icons
 
-### Security & Performance
-- **CSRF Protection**: Bảo vệ chống tấn công CSRF
-- **Rate Limiting**: Giới hạn tần suất request
-- **Input Sanitization**: Làm sạch dữ liệu đầu vào
-- **File Minification**: Nén file CSS/JS
+## 👤 Author
 
-### Development Tools
-- **Git**: Version control
-- **Composer**: Dependency management (tùy chọn)
-- **PowerShell**: Automation scripts
+**Nguyen Thanh Dat**  
+Email: ngthanhdat.fudn@gmail.com  
+GitHub: [@datyuno1409](https://github.com/datyuno1409)
 
-## API Documentation
+## 📝 License
 
-### Endpoints chính
-- `GET /api.php?endpoint=articles` - Lấy danh sách bài viết
-- `GET /api.php?endpoint=projects` - Lấy danh sách dự án
-- `GET /api.php?endpoint=about` - Thông tin cá nhân
-- `GET /api.php?endpoint=stats` - Thống kê website
+MIT License
 
-## Hướng dẫn sử dụng
+## 🔄 Migration from PHP
 
-### Quản lý bài viết
-1. Truy cập admin panel tại `/admin`
-2. Đăng nhập với tài khoản admin
-3. Vào mục "Articles" để tạo/chỉnh sửa bài viết
-4. Sử dụng editor để viết nội dung
-5. Publish hoặc lưu draft
-
-### Quản lý dự án
-1. Vào mục "Projects" trong admin
-2. Thêm thông tin dự án, link demo, source code
-3. Upload hình ảnh minh họa
-4. Cấu hình hiển thị trên trang chủ
-
-### Tùy chỉnh giao diện
-1. Chỉnh sửa file CSS trong `assets/css/`
-2. Cập nhật JavaScript trong `assets/js/`
-3. Sử dụng file minified cho production
-
-## Thông tin liên hệ
-
-**Tác giả**: Nguyen Thanh Dat  
-**Email**: ngthanhdat.fudn@gmail.com  
-**GitHub**: [github.com/datyuno1409](https://github.com/datyuno1409)  
-**Website**: [your-website.com](https://your-website.com)  
-
-## License
-
-Dự án này được phát hành dưới [MIT License](LICENSE).
-
-## Changelog
-
-### v1.0.0 (2025-01-12)
-- ✨ Phiên bản đầu tiên
-- 🎨 Giao diện terminal-style hoàn chỉnh
-- 📝 Hệ thống blog và portfolio
-- 🔐 Admin panel với bảo mật
-- 🚀 Tối ưu hóa performance
+This project was migrated from PHP to Python/FastAPI while maintaining:
+- ✅ All functionality
+- ✅ AdminLTE3 interface
+- ✅ Frontend design
+- ✅ Database structure
+- ✅ API compatibility
 
 ---
 
-**⭐ Nếu dự án hữu ích, đừng quên star repository!**
+**Made with ❤️ using FastAPI and Python**

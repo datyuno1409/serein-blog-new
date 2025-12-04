@@ -1,65 +1,113 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# C extensions
+*.so
 
-# Database
-*.sql
-*.db
-*.sqlite
-*.sqlite3
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Logs
-logs
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
 *.log
+local_settings.py
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Flask stuff:
+instance/
+.webassets-cache
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Scrapy stuff:
+.scrapy
 
-# IDE files
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Database
+*.db
+*.sqlite
+*.sqlite3
 
-# Temporary files
-*.tmp
-*.temp
-
-# Build outputs
-build/
-dist/
-
-# PHP specific (for local development only)
-# These won't work on Netlify anyway
-vendor/
-composer.lock
-*.php~
-
-# Local server files
-router.php
-.htaccess
+# Uploads
+uploads/
