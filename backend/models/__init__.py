@@ -11,6 +11,7 @@ from .social_link import SocialLink
 from .testimonial import Testimonial
 from .seo_setting import SEOSetting
 from .setting import Setting
+from .theme_settings import ThemeSettings
 
 __all__ = [
     'Base',
@@ -22,5 +23,6 @@ __all__ = [
     'SocialLink',
     'Testimonial',
     'SEOSetting',
-    'Setting'
+    'Setting',
+    'ThemeSettings'
 ]
