@@ -15,6 +15,7 @@ from .skills import router as skills_router
 from .social_links import router as social_links_router
 from .seo_settings import router as seo_router
 from .settings import router as settings_router
+from .theme import router as theme_router
 
 # Include all routers
 api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
@@ -25,3 +26,4 @@ api_router.include_router(skills_router, prefix="/skills", tags=["Skills"])
 api_router.include_router(social_links_router, prefix="/social-links", tags=["Social Links"])
 api_router.include_router(seo_router, prefix="/seo", tags=["SEO"])
 api_router.include_router(settings_router, prefix="/settings", tags=["Settings"])
+api_router.include_router(theme_router, tags=["Theme"])

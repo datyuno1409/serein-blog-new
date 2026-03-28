@@ -20,32 +20,39 @@ def create_admin():
     try:
         print("=== Create Admin User ===\n")
         
-        # Get username
-        while True:
-            username = input("Username: ").strip()
-            if len(username) < 3:
+        # Get username from env or input
+        username = os.getenv("ADMIN_USERNAME")
+        if not username:
+            while True:
+                username = input("Username: ").strip()
+                if len(username) >= 3:
+                    break
                 print("Username must be at least 3 characters")
-                continue
-            
-            # Check if exists
-            existing = db.query(User).filter(User.username == username).first()
-            if existing:
-                print(f"User '{username}' already exists!")
-                return
-            break
         
-        # Get password
-        while True:
-            password = getpass("Password: ")
-            if len(password) < 6:
-                print("Password must be at least 6 characters")
-                continue
-            
-            password_confirm = getpass("Confirm password: ")
-            if password != password_confirm:
-                print("Passwords don't match!")
-                continue
-            break
+        # Check if exists
+        existing = db.query(User).filter(User.username == username).first()
+        if existing:
+            # If using env var, just log and return success-like
+            if os.getenv("ADMIN_USERNAME"):
+                print(f"User '{username}' already exists (env var provided). Skipping.")
+                return
+            print(f"User '{username}' already exists!")
+            return
+
+        # Get password from env or input
+        password = os.getenv("ADMIN_PASSWORD")
+        if not password:
+            while True:
+                password = getpass("Password: ")
+                if len(password) < 6:
+                    print("Password must be at least 6 characters")
+                    continue
+                
+                password_confirm = getpass("Confirm password: ")
+                if password != password_confirm:
+                    print("Passwords don't match!")
+                    continue
+                break
         
         # Create user
         admin_user = User(

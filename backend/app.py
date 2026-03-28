@@ -35,13 +35,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+# Static files
+app.mount("/assets", StaticFiles(directory="frontend/assets"), name="assets")
 app.mount("/admin/css", StaticFiles(directory="admin/css"), name="admin_css")
 app.mount("/admin/js", StaticFiles(directory="admin/js"), name="admin_js")
 
 # Templates
-templates = Jinja2Templates(directory=".")
+templates = Jinja2Templates(directory="frontend/templates")
 
 # Include API router
 app.include_router(api_router)
@@ -51,6 +51,12 @@ app.include_router(api_router)
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, db: Session = Depends(get_db)):
     """Homepage"""
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/home", response_class=HTMLResponse)
+async def home_alias(request: Request):
+    """Homepage alias"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 
@@ -82,31 +88,31 @@ async def post(request: Request):
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_login(request: Request):
     """Admin login page"""
-    return templates.TemplateResponse("admin/index.php", {"request": request})
+    return templates.TemplateResponse("admin/index.html", {"request": request})
 
 
 @app.get("/admin/dashboard", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
     """Admin dashboard"""
-    return templates.TemplateResponse("admin/dashboard.php", {"request": request})
+    return templates.TemplateResponse("admin/dashboard.html", {"request": request})
 
 
 @app.get("/admin/articles", response_class=HTMLResponse)
 async def admin_articles(request: Request):
     """Admin articles management"""
-    return templates.TemplateResponse("admin/articles.php", {"request": request})
+    return templates.TemplateResponse("admin/articles.html", {"request": request})
 
 
 @app.get("/admin/projects", response_class=HTMLResponse)
 async def admin_projects(request: Request):
     """Admin projects management"""
-    return templates.TemplateResponse("admin/projects.php", {"request": request})
+    return templates.TemplateResponse("admin/projects.html", {"request": request})
 
 
 @app.get("/admin/settings", response_class=HTMLResponse)
 async def admin_settings(request: Request):
     """Admin settings"""
-    return templates.TemplateResponse("admin/settings.php", {"request": request})
+    return templates.TemplateResponse("admin/settings.html", {"request": request})
 
 
 # ============= Health Check =============
