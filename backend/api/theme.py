@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from backend.database import get_db
 from backend.models.theme_settings import ThemeSettings
 from backend.models.user import User
-from backend.auth import get_current_user
+from backend.auth import get_current_user, get_current_admin_user
 import json
 
 router = APIRouter(prefix="/api/theme", tags=["theme"])
@@ -44,7 +44,7 @@ async def get_all_theme_settings(db: Session = Depends(get_db)):
         try:
             # Try to parse JSON values
             value = json.loads(setting.value)
-        except:
+        except (json.JSONDecodeError, ValueError):
             value = setting.value
         
         if setting.category in result:
@@ -63,7 +63,10 @@ async def get_navigation_menu(db: Session = Depends(get_db)):
     ).first()
     
     if nav_setting:
-        return json.loads(nav_setting.value)
+        try:
+            return json.loads(nav_setting.value)
+        except (json.JSONDecodeError, ValueError):
+            pass
     
     # Default menu
     return [
@@ -78,7 +81,7 @@ async def get_navigation_menu(db: Session = Depends(get_db)):
 async def update_navigation_menu(
     menu_items: List[Dict[str, Any]],
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_admin_user)
 ):
     """Update navigation menu items"""
     nav_setting = db.query(ThemeSettings).filter(
@@ -107,7 +110,7 @@ async def update_navigation_menu(
 async def update_theme_settings(
     settings: Dict[str, Any],
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_admin_user)
 ):
     """Update multiple theme settings at once"""
     for category, values in settings.items():
@@ -166,7 +169,7 @@ async def get_color_scheme(db: Session = Depends(get_db)):
 async def delete_theme_setting(
     key: str,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_admin_user)
 ):
     """Delete a theme setting"""
     setting = db.query(ThemeSettings).filter(ThemeSettings.key == key).first()

@@ -185,6 +185,7 @@
                 if (response.ok) {
                     // Store token
                     localStorage.setItem('access_token', data.access_token);
+                    document.cookie = `access_token=${data.access_token}; path=/; max-age=1800; SameSite=Strict`;
                     
                     // Show success message
                     successMessage.textContent = 'Login successful! Redirecting...';
@@ -215,6 +216,7 @@
             })
             .then(response => {
                 if (response.ok) {
+                    document.cookie = `access_token=${token}; path=/; max-age=1800; SameSite=Strict`;
                     window.location.href = '/admin/dashboard';
                 }
             });

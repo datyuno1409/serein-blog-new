@@ -2,20 +2,21 @@
 Main FastAPI Application
 Serein Blog Platform - Python/FastAPI Version
 """
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
+from jose import jwt, JWTError
 
 from .config import settings
-from .database import engine, get_db, Base
+from .database import engine, get_db, Base, SessionLocal
 from .api import api_router
 from . import models  # Import all models to create tables
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+# Create database tables (Managed via Alembic)
+# Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -35,13 +36,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def admin_auth_middleware(request: Request, call_next):
+    path = request.url.path
+    if path.startswith("/admin"):
+        # Exclude login page, CSS, and JS assets
+        if path != "/admin" and path != "/admin/" and not path.startswith(("/admin/css", "/admin/js")):
+            token = request.cookies.get("access_token")
+            is_authenticated = False
+            if token:
+                try:
+                    payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+                    username = payload.get("sub")
+                    if username:
+                        db = SessionLocal()
+                        try:
+                            from .models.user import User
+                            user = db.query(User).filter(User.username == username).first()
+                            if user and user.role == "admin":
+                                is_authenticated = True
+                        finally:
+                            db.close()
+                except JWTError:
+                    pass
+            
+            if not is_authenticated:
+                return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
+                
+    response = await call_next(request)
+    return response
+
 # Static files
 app.mount("/assets", StaticFiles(directory="frontend/assets"), name="assets")
 app.mount("/admin/css", StaticFiles(directory="admin/css"), name="admin_css")
 app.mount("/admin/js", StaticFiles(directory="admin/js"), name="admin_js")
 
 # Templates
-templates = Jinja2Templates(directory="frontend/templates")
+templates = Jinja2Templates(directory=["frontend/templates", "."])
 
 # Include API router
 app.include_router(api_router)

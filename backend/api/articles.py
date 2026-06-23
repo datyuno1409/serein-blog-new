@@ -31,19 +31,19 @@ async def get_articles(
     return articles
 
 
-@router.get("/{article_id}", response_model=ArticleResponse)
-async def get_article(article_id: int, db: Session = Depends(get_db)):
-    """Get article by ID"""
-    article = db.query(Article).filter(Article.id == article_id).first()
+@router.get("/slug/{slug}", response_model=ArticleResponse)
+async def get_article_by_slug(slug: str, db: Session = Depends(get_db)):
+    """Get article by slug"""
+    article = db.query(Article).filter(Article.slug == slug).first()
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
     return article
 
 
-@router.get("/slug/{slug}", response_model=ArticleResponse)
-async def get_article_by_slug(slug: str, db: Session = Depends(get_db)):
-    """Get article by slug"""
-    article = db.query(Article).filter(Article.slug == slug).first()
+@router.get("/{article_id}", response_model=ArticleResponse)
+async def get_article(article_id: int, db: Session = Depends(get_db)):
+    """Get article by ID"""
+    article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
     return article
