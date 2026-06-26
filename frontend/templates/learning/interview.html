@@ -1,0 +1,521 @@
+{% extends 'learning/base.html' %}
+{% block title %}Interview Prep | Serein Learning{% endblock %}
+{% block head %}
+<style>
+    /* Neon Cyberpunk Theme Variables */
+    :root {
+        --cyber-cyan: #00ff88;
+        --cyber-magenta: #00aaff;
+        --cyber-yellow: #ffaa00;
+        --cyber-bg: #0a0a12;
+        --glass-bg: rgba(16, 16, 28, 0.7);
+        --glass-border: rgba(0, 255, 136, 0.18);
+        --neon-glow: 0 0 15px rgba(0, 255, 136, 0.22);
+        --neon-glow-magenta: 0 0 15px rgba(0, 170, 255, 0.22);
+    }
+
+    .interview-shell {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 32px;
+        min-height: calc(100vh - 80px);
+        padding: 40px var(--container-padding);
+        background: var(--cyber-bg);
+        color: #e2e8f0;
+    }
+
+    /* Category filter neon tabs */
+    .filter-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+    .tab-btn {
+        background: rgba(20, 20, 35, 0.6);
+        border: 1px solid rgba(0, 240, 255, 0.3);
+        color: #a0aec0;
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
+    }
+    .tab-btn:hover, .tab-btn.active {
+        color: #fff;
+        border-color: var(--cyber-cyan);
+        background: rgba(0, 240, 255, 0.1);
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+    }
+
+    /* Card Grid and Flip Cards */
+    .question-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+        margin-top: 20px;
+    }
+
+    .flip-card-container {
+        perspective: 1000px;
+        height: 320px;
+        position: relative;
+    }
+
+    .flip-card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        border-radius: 12px;
+    }
+
+    .flip-card.flipped {
+        transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 12px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+        border: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+    }
+
+    .card-front {
+        border-left: 4px solid var(--cyber-cyan);
+        box-shadow: var(--neon-glow);
+    }
+
+    .card-back {
+        transform: rotateY(180deg);
+        border-left: 4px solid var(--cyber-magenta);
+        box-shadow: var(--neon-glow-magenta);
+        overflow-y: auto;
+    }
+
+    /* Difficulty Badges */
+    .badge-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .cat-badge {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        background: rgba(0, 240, 255, 0.15);
+        color: var(--cyber-cyan);
+        padding: 2px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+    .diff-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+    .diff-easy {
+        background: rgba(72, 187, 120, 0.15);
+        color: #48bb78;
+        border: 1px solid rgba(72, 187, 120, 0.3);
+    }
+    .diff-medium {
+        background: rgba(237, 137, 54, 0.15);
+        color: #ed8936;
+        border: 1px solid rgba(237, 137, 54, 0.3);
+    }
+    .diff-hard {
+        background: rgba(229, 62, 62, 0.15);
+        color: #e53e3e;
+        border: 1px solid rgba(229, 62, 62, 0.3);
+    }
+
+    /* Content styling inside cards */
+    .question-txt {
+        font-size: 1.15rem;
+        font-weight: 500;
+        line-height: 1.5;
+        color: #fff;
+        margin: auto 0;
+        text-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    .answer-txt {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #cbd5e0;
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-bottom: 12px;
+        padding-right: 4px;
+    }
+    .answer-txt pre {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 10px;
+        border-radius: 6px;
+        overflow-x: auto;
+        border: 1px solid rgba(255, 0, 127, 0.2);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+    }
+
+    .card-footer-hint {
+        font-size: 0.75rem;
+        color: #718096;
+        text-align: center;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        padding-top: 8px;
+    }
+
+    /* Action buttons on card back */
+    .action-row {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+    }
+    .action-btn {
+        flex: 1;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-family: var(--font-mono);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        text-align: center;
+    }
+    .btn-mastered {
+        background: rgba(72, 187, 120, 0.15);
+        color: #48bb78;
+        border-color: rgba(72, 187, 120, 0.3);
+    }
+    .btn-mastered.active, .btn-mastered:hover {
+        background: #48bb78;
+        color: #fff;
+        box-shadow: 0 0 10px rgba(72, 187, 120, 0.4);
+    }
+    .btn-review {
+        background: rgba(229, 62, 62, 0.15);
+        color: #e53e3e;
+        border-color: rgba(229, 62, 62, 0.3);
+    }
+    .btn-review.active, .btn-review:hover {
+        background: #e53e3e;
+        color: #fff;
+        box-shadow: 0 0 10px rgba(229, 62, 62, 0.4);
+    }
+
+    /* Progress and overview stats */
+    .progress-section {
+        background: var(--glass-bg);
+        border: 1px solid rgba(0, 240, 255, 0.15);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 30px;
+        box-shadow: var(--neon-glow);
+    }
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .progress-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+    }
+    .progress-stats {
+        font-family: var(--font-mono);
+        color: var(--cyber-cyan);
+    }
+    .progress-bar-container {
+        height: 8px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 240, 255, 0.1);
+    }
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+        width: 0%;
+        transition: width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 0 0 8px var(--cyber-cyan);
+    }
+
+    /* Indicator for mastered questions on card status */
+    .card-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        z-index: 10;
+        display: none;
+    }
+    .card-indicator.mastered {
+        display: block;
+        background: #48bb78;
+        box-shadow: 0 0 8px #48bb78;
+    }
+    .card-indicator.review {
+        display: block;
+        background: #e53e3e;
+        box-shadow: 0 0 8px #e53e3e;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <!-- Hero section -->
+        <section class="hero-card learning-panel">
+            <div class="hero-label"><span data-lang-vi>Luyện tập phỏng vấn</span><span data-lang-en>Interview Preparation</span></div>
+            <h1 class="hero-title-sm"><span data-lang-vi>Hệ thống Flashcard Công nghệ</span><span data-lang-en>Tech Flashcards System</span></h1>
+            <p class="hero-desc">
+                <span data-lang-vi>Mở rộng tư duy kỹ thuật bằng cách ôn luyện thẻ ghi nhớ từ các chủ đề Java, Spring Boot, Python và SQL. Đánh dấu tình trạng nắm vững của từng câu hỏi để tối ưu hóa lộ trình ôn tập.</span>
+                <span data-lang-en>Expand your technical mind by reviewing memory cards for Java, Spring Boot, Python, and SQL topics. Mark question statuses to optimize your review roadmap.</span>
+            </p>
+        </section>
+
+        <!-- Progress Tracking -->
+        <section class="progress-section">
+            <div class="progress-header">
+                <span class="progress-title"><span data-lang-vi>Tiến độ danh mục hiện tại</span><span data-lang-en>Current Category Progress</span></span>
+                <span class="progress-stats" id="progressStats">0/0 (0%)</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </section>
+
+        <!-- Filter neon tabs -->
+        <div class="filter-tabs" id="filterTabs">
+            <button class="tab-btn active" data-category=""><span data-lang-vi>Tất cả</span><span data-lang-en>All</span></button>
+            <button class="tab-btn" data-category="java"><span data-lang-vi>Java</span><span data-lang-en>Java</span></button>
+            <button class="tab-btn" data-category="spring boot"><span data-lang-vi>Spring Boot</span><span data-lang-en>Spring Boot</span></button>
+            <button class="tab-btn" data-category="python"><span data-lang-vi>Python</span><span data-lang-en>Python</span></button>
+            <button class="tab-btn" data-category="sql"><span data-lang-vi>SQL</span><span data-lang-en>SQL</span></button>
+        </div>
+
+        <!-- Flashcards grid -->
+        <div class="question-grid" id="questionGrid">
+            <!-- Dynamic items rendered via JavaScript -->
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let questionsData = [];
+    let currentCategory = "";
+
+    // Fetch questions and render
+    async function loadQuestions() {
+        try {
+            const url = currentCategory ? `/api/learning/interview/questions?category=${encodeURIComponent(currentCategory)}` : '/api/learning/interview/questions';
+            const res = await fetch(url, { credentials: 'include' });
+            if (!res.ok) throw new Error("Failed to load interview questions");
+            
+            questionsData = await res.json();
+            renderQuestions();
+            updateProgress();
+        } catch (err) {
+            console.error(err);
+            document.getElementById('questionGrid').innerHTML = `<div class="empty-state"><span data-lang-vi>Không thể tải dữ liệu câu hỏi. Vui lòng đăng nhập lại.</span><span data-lang-en>Failed to load questions. Please log in again.</span></div>`;
+        }
+    }
+
+    // Toggle card flip
+    function toggleFlip(element) {
+        element.classList.toggle('flipped');
+    }
+
+    // Render questions to DOM
+    function renderQuestions() {
+        const grid = document.getElementById('questionGrid');
+        if (!questionsData.length) {
+            grid.innerHTML = `<div class="empty-state"><span data-lang-vi>Không tìm thấy câu hỏi nào thuộc chuyên mục này.</span><span data-lang-en>No questions found in this category.</span></div>`;
+            return;
+        }
+
+        grid.innerHTML = questionsData.map(q => {
+            const diffClass = `diff-${q.difficulty.toLowerCase()}`;
+            const indicatorClass = q.user_status ? q.user_status : '';
+            
+            // Format answer with code support if includes markdown code blocks
+            let answerFormatted = q.answer;
+            if (answerFormatted.includes('```')) {
+                // simple markdown parsing for code blocks
+                answerFormatted = answerFormatted.replace(/```(python|java|sql|javascript|json|bash)?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            }
+            // replace newlines with br outside of pre
+            answerFormatted = answerFormatted.split('</pre>').map(part => {
+                if (part.includes('<pre>')) return part;
+                return part.replace(/\n/g, '<br>');
+            }).join('</pre>');
+
+            return `
+                <div class="flip-card-container">
+                    <div class="card-indicator ${indicatorClass}" id="indicator-${q.id}"></div>
+                    <div class="flip-card" id="card-${q.id}" onclick="if(!event.target.closest('.action-row')) toggleFlip(this)">
+                        <div class="card-front">
+                            <div class="badge-row">
+                                <span class="cat-badge">${q.category.toUpperCase()}</span>
+                                <span class="diff-badge ${diffClass}">${q.difficulty}</span>
+                            </div>
+                            <div class="question-txt">${q.question}</div>
+                            <div class="card-footer-hint">
+                                <span data-lang-vi>Nhấp chuột để xem đáp án</span>
+                                <span data-lang-en>Click to flip card & view answer</span>
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <div class="badge-row">
+                                <span class="cat-badge">${q.category.toUpperCase()}</span>
+                                <span class="diff-badge ${diffClass}">${q.difficulty}</span>
+                            </div>
+                            <div class="answer-txt">${answerFormatted}</div>
+                            <div class="action-row">
+                                <button type="button" class="action-btn btn-mastered ${q.user_status === 'mastered' ? 'active' : ''}" 
+                                    onclick="updateStatus(${q.id}, 'mastered', event)">
+                                    <span data-lang-vi>Nắm vững</span>
+                                    <span data-lang-en>Mastered</span>
+                                </button>
+                                <button type="button" class="action-btn btn-review ${q.user_status === 'review' ? 'active' : ''}" 
+                                    onclick="updateStatus(${q.id}, 'review', event)">
+                                    <span data-lang-vi>Cần ôn lại</span>
+                                    <span data-lang-en>Need Review</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Trigger language rendering updates
+        if (typeof window.renderLanguages === 'function') {
+            window.renderLanguages();
+        } else {
+            // fallback trigger if base language script loaded
+            const curLang = document.documentElement.getAttribute('data-lang') || 'vi';
+            document.querySelectorAll('[data-lang-vi]').forEach(el => el.style.display = curLang === 'vi' ? '' : 'none');
+            document.querySelectorAll('[data-lang-en]').forEach(el => el.style.display = curLang === 'en' ? '' : 'none');
+        }
+    }
+
+    // Update progress bar
+    function updateProgress() {
+        const total = questionsData.length;
+        if (total === 0) {
+            document.getElementById('progressStats').innerText = "0/0 (0%)";
+            document.getElementById('progressBar').style.width = "0%";
+            return;
+        }
+        const mastered = questionsData.filter(q => q.user_status === 'mastered').length;
+        const percent = Math.round((mastered / total) * 100);
+        document.getElementById('progressStats').innerText = `${mastered}/${total} (${percent}%)`;
+        document.getElementById('progressBar').style.width = `${percent}%`;
+    }
+
+    // Call API to update status
+    async function updateStatus(questionId, statusVal, event) {
+        event.stopPropagation(); // prevent flip when clicking action buttons
+        
+        // If already active, toggle off
+        const activeQuestion = questionsData.find(q => q.id === questionId);
+        let newStatus = statusVal;
+        if (activeQuestion.user_status === statusVal) {
+            // no toggle off logic exists on backend yet, but we can set progress or handle toggle
+            // For simplicity, let's keep it as is or toggle it. Let's see: API requires status to be mastered or review
+            // So we send it.
+        }
+
+        try {
+            const res = await fetch(`/api/learning/interview/questions/${questionId}/progress`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+                credentials: 'include'
+            });
+
+            if (!res.ok) throw new Error("Failed to save progress");
+            
+            // update local data
+            activeQuestion.user_status = newStatus;
+            
+            // update UI classes
+            const card = document.getElementById(`card-${questionId}`);
+            const indicator = document.getElementById(`indicator-${questionId}`);
+            const btnMastered = card.querySelector('.btn-mastered');
+            const btnReview = card.querySelector('.btn-review');
+            
+            btnMastered.classList.remove('active');
+            btnReview.classList.remove('active');
+            indicator.className = 'card-indicator';
+            
+            if (newStatus === 'mastered') {
+                btnMastered.classList.add('active');
+                indicator.classList.add('mastered');
+            } else if (newStatus === 'review') {
+                btnReview.classList.add('active');
+                indicator.classList.add('review');
+            }
+
+            updateProgress();
+        } catch (err) {
+            console.error(err);
+            alert("Error updating status. Please try again.");
+        }
+    }
+
+    // Attach filter tab events
+    document.getElementById('filterTabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.tab-btn');
+        if (!tab) return;
+        
+        document.querySelectorAll('#filterTabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+        tab.classList.add('active');
+        
+        currentCategory = tab.getAttribute('data-category');
+        loadQuestions();
+    });
+
+    // Initial setup
+    document.addEventListener('DOMContentLoaded', () => {
+        loadQuestions();
+        
+        // Listen to language switcher clicks
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTimeout(() => {
+                    renderQuestions();
+                }, 50);
+            });
+        });
+    });
+</script>
+{% endblock %}

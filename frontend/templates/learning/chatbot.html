@@ -1,0 +1,387 @@
+{% extends 'learning/base.html' %}
+{% block title %}AI Assistant | Serein Learning{% endblock %}
+{% block head %}
+<style>
+    /* Phosphor Terminal Styling */
+    :root {
+        --term-green: #39ff14;
+        --term-amber: #ffb000;
+        --term-cyan: #00ffff;
+        --term-bg: #050508;
+        --term-glow: 0 0 10px rgba(57, 255, 20, 0.4);
+    }
+
+    .terminal-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 160px);
+        min-height: 500px;
+        background: var(--term-bg);
+        border: 2px solid rgba(57, 255, 20, 0.3);
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(57, 255, 20, 0.15);
+        position: relative;
+        overflow: hidden;
+        font-family: var(--font-mono);
+    }
+
+    /* CRT Scanline and Flicker Effects */
+    .terminal-wrapper::after {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 0; left: 0; bottom: 0; right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        aspect-ratio: 16/9;
+        background-size: 100% 3px, 6px 100%;
+        pointer-events: none;
+        z-index: 5;
+    }
+
+    .terminal-header {
+        background: rgba(57, 255, 20, 0.08);
+        border-bottom: 1px solid rgba(57, 255, 20, 0.3);
+        padding: 10px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--term-green);
+        text-shadow: var(--term-glow);
+    }
+    .terminal-dots {
+        display: flex;
+        gap: 6px;
+    }
+    .term-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(57, 255, 20, 0.4);
+    }
+    .term-title-txt {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .terminal-body {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        color: var(--term-green);
+        text-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Message lines formatting */
+    .terminal-line {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .line-header {
+        display: flex;
+        gap: 10px;
+        font-weight: bold;
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+    .line-user {
+        color: var(--term-cyan);
+    }
+    .line-ai {
+        color: var(--term-green);
+    }
+    .line-system {
+        color: var(--term-amber);
+    }
+    .line-content {
+        white-space: pre-wrap;
+    }
+    .line-content pre {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px dashed rgba(57, 255, 20, 0.3);
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: var(--term-amber);
+        font-size: 0.85rem;
+    }
+
+    /* Terminal input prompt row */
+    .terminal-input-row {
+        background: rgba(0, 0, 0, 0.4);
+        border-top: 1px solid rgba(57, 255, 20, 0.2);
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        gap: 10px;
+    }
+    .term-prompt {
+        color: var(--term-cyan);
+        font-weight: bold;
+        user-select: none;
+    }
+    .term-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--term-cyan);
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        caret-color: var(--term-green);
+    }
+
+    /* Cursor animation fallback */
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+    .custom-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background: var(--term-green);
+        margin-left: 4px;
+        animation: blink 1s step-end infinite;
+        vertical-align: middle;
+    }
+
+    /* Typing indicator dots */
+    .typing-indicator {
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+    }
+    .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--term-green);
+        border-radius: 50%;
+        animation: blink 1s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <!-- Hero card -->
+        <section class="hero-card learning-panel" style="margin-bottom: 20px;">
+            <div class="hero-label"><span data-lang-vi>Trợ lý trí tuệ nhân tạo</span><span data-lang-en>AI Learning Assistant</span></div>
+            <h1 class="hero-title-sm"><span data-lang-vi>Serein Terminal AI</span><span data-lang-en>Serein Terminal AI</span></h1>
+            <p class="hero-desc">
+                <span data-lang-vi>Hỏi đáp về code, giải thích thuật toán hoặc yêu cầu gợi ý khóa học thông qua giao diện giả lập console cổ điển. Hỗ trợ các lệnh điều khiển hệ thống bằng ký tự `/`.</span>
+                <span data-lang-en>Ask code questions, seek algorithm reviews, or query course details using a retro console interface. Supports shell-like `/` command structures.</span>
+            </p>
+        </section>
+
+        <!-- Main Terminal UI -->
+        <div class="terminal-wrapper">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="term-dot"></div>
+                    <div class="term-dot"></div>
+                    <div class="term-dot"></div>
+                </div>
+                <div class="term-title-txt">serein_terminal_v4.0.2</div>
+                <div class="term-status">ONLINE</div>
+            </div>
+
+            <!-- Terminal scroll lines -->
+            <div class="terminal-body" id="termBody">
+                <!-- Loaded on startup via JS -->
+            </div>
+
+            <!-- Prompt & Input -->
+            <div class="terminal-input-row">
+                <span class="term-prompt">serein-user@core:~$</span>
+                <input type="text" class="term-input" id="termInput" autocomplete="off" autofocus placeholder="Type message or /help...">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const termBody = document.getElementById('termBody');
+    const termInput = document.getElementById('termInput');
+
+    // System Boot Sequence
+    const bootLogs = [
+        "SEREIN COGNITIVE NETWORKS [VERSION 4.0.2]",
+        "(C) 2026 SEREIN LABS. ALL RIGHTS RESERVED.",
+        "-----------------------------------------",
+        "INITIALIZING INTERACTION MODULES...",
+        "CONNECTING TO API ROUTER R-779... SUCCESS.",
+        "SECURE TOKEN AUTHENTICATED FOR USER: {{ current_user.username }}",
+        "WELCOME BACK, CORE DEVELOPER. SYSTEM READY.",
+        "Enter message or type /help for command directory."
+    ];
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function runBootSequence() {
+        for (const log of bootLogs) {
+            appendLine("SYSTEM", log, "system");
+            await delay(100);
+        }
+        termBody.scrollTop = termBody.scrollHeight;
+    }
+
+    // Append single terminal line
+    function appendLine(sender, message, type) {
+        const line = document.createElement('div');
+        line.className = `terminal-line line-${type}`;
+        
+        let headerLabel = "";
+        if (type === "user") headerLabel = `[${new Date().toLocaleTimeString()}] ${sender} >`;
+        if (type === "ai") headerLabel = `[${new Date().toLocaleTimeString()}] SEREIN_AI >`;
+        if (type === "system") headerLabel = `[SYSTEM] >`;
+
+        // Format code blocks
+        let formattedMsg = message;
+        if (formattedMsg.includes('```')) {
+            formattedMsg = formattedMsg.replace(/```(python|java|sql|javascript|json|bash)?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+        }
+
+        line.innerHTML = `
+            <div class="line-header line-${type}">${headerLabel}</div>
+            <div class="line-content">${formattedMsg}</div>
+        `;
+        
+        termBody.appendChild(line);
+        termBody.scrollTop = termBody.scrollHeight;
+    }
+
+    // Show temporary typing indicator
+    let typingIndicatorEl = null;
+    function showTypingIndicator() {
+        if (typingIndicatorEl) return;
+        
+        typingIndicatorEl = document.createElement('div');
+        typingIndicatorEl.className = 'terminal-line line-ai';
+        typingIndicatorEl.innerHTML = `
+            <div class="line-header line-ai">[SYSTEM] SEREIN_AI is generating...</div>
+            <div class="line-content">
+                <div class="typing-indicator">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            </div>
+        `;
+        termBody.appendChild(typingIndicatorEl);
+        termBody.scrollTop = termBody.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        if (typingIndicatorEl) {
+            typingIndicatorEl.remove();
+            typingIndicatorEl = null;
+        }
+    }
+
+    // Handle command executions
+    async function handleCommand(cmdText) {
+        const inputVal = cmdText.trim();
+        if (!inputVal) return;
+
+        // Log user input
+        appendLine("{{ current_user.username }}", inputVal, "user");
+        termInput.value = "";
+
+        // Check slash commands
+        if (inputVal.startsWith('/')) {
+            const parts = inputVal.split(' ');
+            const primaryCmd = parts[0].toLowerCase();
+            
+            if (primaryCmd === '/help') {
+                const helpMsg = `AVAILABLE COMMANDS:
+  /help       Display this directories manual
+  /clear      Purge console memory buffer
+  /status     Audit core profile details and active commitments
+  /system     Show environment and configuration indicators`;
+                appendLine("SYSTEM", helpMsg, "system");
+                return;
+            }
+            if (primaryCmd === '/clear') {
+                termBody.innerHTML = "";
+                appendLine("SYSTEM", "Terminal buffer cleared.", "system");
+                return;
+            }
+            if (primaryCmd === '/status') {
+                const statusMsg = `USER PROFILE REPORT:
+  Username: {{ current_user.username }}
+  Full Name: {{ current_user.full_name or 'N/A' }}
+  Goal: {{ current_user.learning_goal or 'Not defined' }}
+  Weekly Commitment: {{ current_user.weekly_hours or 1 }} hours`;
+                appendLine("SYSTEM", statusMsg, "system");
+                return;
+            }
+            if (primaryCmd === '/system') {
+                const sysMsg = `SEREIN PLATFORM CONSOLE STATE:
+  Core Version: v4.0.2
+  API Gateway: Active
+  Security Level: JWT Enabled
+  AI Pipeline: Gemini Active / Fallback Key-Engine Operational`;
+                appendLine("SYSTEM", sysMsg, "system");
+                return;
+            }
+            
+            // Unknown command
+            appendLine("SYSTEM", `Command not found: ${primaryCmd}. Type /help for assistance.`, "system");
+            return;
+        }
+
+        // Send to backend chatbot API
+        showTypingIndicator();
+        try {
+            const res = await fetch('/api/learning/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: inputVal }),
+                credentials: 'include'
+            });
+
+            removeTypingIndicator();
+            if (!res.ok) throw new Error("API Connection Failed");
+
+            const data = await res.json();
+            appendLine("AI", data.reply, "ai");
+        } catch (err) {
+            removeTypingIndicator();
+            console.error(err);
+            appendLine("SYSTEM", "API Connection Failed. Fallback logic error. Ensure credentials and API services are operating correctly.", "system");
+        }
+    }
+
+    // Set up listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        runBootSequence();
+
+        termInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleCommand(termInput.value);
+            }
+        });
+
+        // Click anywhere in terminal grid to focus input
+        document.querySelector('.terminal-wrapper').addEventListener('click', () => {
+            termInput.focus();
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+﻿{% extends 'learning/base.html' %}
+{% block title %}My Profile | Serein Learning{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <section class="hero-card learning-panel">
+            <div class="hero-label"><span data-lang-vi>Hồ sơ cá nhân</span><span data-lang-en>Personal profile</span></div>
+            <h1 class="hero-title-sm">{{ current_user.full_name }}</h1>
+            <p class="hero-desc"><span data-lang-vi>Quản lý thông tin cá nhân, mục tiêu học tập và thời lượng học mỗi tuần trong một hồ sơ gọn gàng.</span><span data-lang-en>Manage your personal details, learning goals, and weekly study commitment in one clean profile.</span></p>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card fade-in-up">
+                <div class="stat-icon">◎</div>
+                <div class="stat-value">{{ current_user.weekly_hours or 1 }}h</div>
+                <h3 class="stat-label"><span data-lang-vi>Mục tiêu tuần</span><span data-lang-en>Weekly goal</span></h3>
+                <p class="stat-description"><span data-lang-vi>Thời gian học bạn cam kết mỗi tuần.</span><span data-lang-en>The study time you commit to every week.</span></p>
+            </article>
+        </section>
+
+        <section class="learning-panel profile-card" style="padding: 24px;">
+            <div class="section-headline">
+                <div>
+                    <div class="page-eyebrow"><span data-lang-vi>Chỉnh sửa hồ sơ</span><span data-lang-en>Edit profile</span></div>
+                    <h2 class="page-title"><span data-lang-vi>Cập nhật thông tin</span><span data-lang-en>Update your details</span></h2>
+                    <p id="profileMessage" class="form-help muted"><span data-lang-vi>Cập nhật mục tiêu học và thông tin cá nhân.</span><span data-lang-en>Update your learning goals and personal information.</span></p>
+                </div>
+            </div>
+            <form id="profileForm" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="full_name"><span data-lang-vi>Họ và tên</span><span data-lang-en>Full name</span></label>
+                    <input class="form-input" id="full_name" name="full_name" value="{{ current_user.full_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email"><span data-lang-vi>Email</span><span data-lang-en>Email</span></label>
+                    <input class="form-input" id="email" name="email" type="email" value="{{ current_user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="learning_goal"><span data-lang-vi>Mục tiêu học tập</span><span data-lang-en>Learning goal</span></label>
+                    <input class="form-input" id="learning_goal" name="learning_goal" value="{{ current_user.learning_goal or '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="bio"><span data-lang-vi>Giới thiệu ngắn</span><span data-lang-en>Short bio</span></label>
+                    <textarea class="form-textarea" id="bio" name="bio">{{ current_user.bio or '' }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="weekly_hours"><span data-lang-vi>Giờ học mỗi tuần</span><span data-lang-en>Weekly hours</span></label>
+                    <input class="form-input" id="weekly_hours" name="weekly_hours" type="number" min="1" max="40" value="{{ current_user.weekly_hours or 1 }}">
+                </div>
+                <button class="btn" type="submit"><span data-lang-vi>Lưu hồ sơ</span><span data-lang-en>Save profile</span></button>
+            </form>
+        </section>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('profileForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const message = document.getElementById('profileMessage');
+        const payload = {
+            full_name: form.full_name.value,
+            email: form.email.value,
+            learning_goal: form.learning_goal.value,
+            bio: form.bio.value,
+            weekly_hours: parseInt(form.weekly_hours.value, 10),
+        };
+        const response = await fetch('/api/learning/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            credentials: 'include',
+        });
+        const currentLang = document.documentElement.getAttribute('data-lang') || 'vi';
+        if (response.ok) {
+            message.className = 'form-success';
+            message.textContent = currentLang === 'vi' ? 'Hồ sơ đã được cập nhật.' : 'Profile updated.';
+        } else {
+            const data = await response.json().catch(() => ({ detail: currentLang === 'vi' ? 'Cập nhật thất bại' : 'Update failed' }));
+            message.className = 'form-error';
+            message.textContent = data.detail || (currentLang === 'vi' ? 'Cập nhật thất bại' : 'Update failed');
+        }
+    });
+</script>
+{% endblock %}

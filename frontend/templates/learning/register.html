@@ -1,0 +1,83 @@
+﻿{% extends 'learning/base.html' %}
+{% block title %}Register | Serein Learning{% endblock %}
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-panel">
+        <div class="auth-aside">
+            <div class="page-eyebrow"><span data-lang-vi>Tạo tài khoản</span><span data-lang-en>Create Account</span></div>
+            <h1 class="page-title"><span data-lang-vi>Bắt đầu hành trình học cá nhân của bạn</span><span data-lang-en>Start your personal learning journey</span></h1>
+            <p class="page-summary"><span data-lang-vi>Đăng ký tài khoản để lưu hồ sơ học tập. Mọi tiến độ được lưu riêng cho từng người dùng.</span><span data-lang-en>Create an account to save your learning profile. All progress is stored separately for each user.</span></p>
+            <div class="section-stack">
+                <div class="stat-card">
+                    <div class="stat-value">3+</div>
+                    <div class="stat-label"><span data-lang-vi>Lộ trình: Python, tiếng Trung, tiếng Anh</span><span data-lang-en>Tracks: Python, Chinese, English</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2</div>
+                    <div class="stat-label"><span data-lang-vi>Chế độ: Flashcard & luyện viết</span><span data-lang-en>Modes: Flashcard & writing practice</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="learning-panel">
+            <div class="page-eyebrow"><span data-lang-vi>Tham gia ngay</span><span data-lang-en>Join Us</span></div>
+            <h2 class="page-title"><span data-lang-vi>Đăng ký</span><span data-lang-en>Register</span></h2>
+            <p id="registerMessage" class="form-help muted"><span data-lang-vi>Tạo tài khoản trong vài giây để lưu dữ liệu học.</span><span data-lang-en>Create an account in seconds to save your learning data.</span></p>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="full_name"><span data-lang-vi>Họ và tên</span><span data-lang-en>Full name</span></label>
+                    <input class="form-input" id="full_name" name="full_name" required data-i18n-placeholder-vi="Nhập họ và tên" data-i18n-placeholder-en="Enter your full name" placeholder="Nhập họ và tên">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email"><span data-lang-vi>Email</span><span data-lang-en>Email</span></label>
+                    <input class="form-input" id="email" name="email" type="email" required data-i18n-placeholder-vi="Nhập email" data-i18n-placeholder-en="Enter your email" placeholder="Nhập email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="username"><span data-lang-vi>Tên đăng nhập</span><span data-lang-en>Username</span></label>
+                    <input class="form-input" id="username" name="username" required data-i18n-placeholder-vi="Tạo tên đăng nhập" data-i18n-placeholder-en="Create a username" placeholder="Tạo tên đăng nhập">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password"><span data-lang-vi>Mật khẩu</span><span data-lang-en>Password</span></label>
+                    <input class="form-input" id="password" name="password" type="password" minlength="6" required data-i18n-placeholder-vi="Tạo mật khẩu" data-i18n-placeholder-en="Create a password" placeholder="Tạo mật khẩu">
+                </div>
+                <div class="auth-actions">
+                    <button class="btn" type="submit"><span data-lang-vi>Tạo tài khoản</span><span data-lang-en>Create account</span></button>
+                    <a class="btn btn-secondary" href="/login"><span data-lang-vi>Tôi đã có tài khoản</span><span data-lang-en>I already have an account</span></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const message = document.getElementById('registerMessage');
+        const payload = {
+            full_name: form.full_name.value,
+            email: form.email.value,
+            username: form.username.value,
+            password: form.password.value,
+        };
+        const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            credentials: 'include',
+        });
+
+        const currentLang = document.documentElement.getAttribute('data-lang') || 'vi';
+        if (response.ok) {
+            message.className = 'form-success';
+            message.textContent = currentLang === 'vi' ? 'Tài khoản đã được tạo. Đang chuyển tới trang đăng nhập...' : 'Account created. Redirecting to login...';
+            window.location.href = '/login';
+            return;
+        }
+
+        const data = await response.json().catch(() => ({ detail: currentLang === 'vi' ? 'Đăng ký thất bại' : 'Register failed' }));
+        message.className = 'form-error';
+        message.textContent = data.detail || (currentLang === 'vi' ? 'Đăng ký thất bại' : 'Register failed');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'learning/base.html' %}
+{% block title %}Learning Dashboard | Serein{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <section class="hero-card learning-panel">
+            <div class="hero-label" data-i18n="dashboard.hero.label">Bảng học tập</div>
+            {% if active_path %}
+            <h1 class="hero-title-sm">{{ active_path.title }}</h1>
+            {% else %}
+            <h1 class="hero-title-sm" data-i18n="dashboard.hero.emptyTitle">Tạo lộ trình đầu tiên</h1>
+            {% endif %}
+            <p class="hero-desc" data-i18n="dashboard.hero.description">Quản lý mục tiêu học tập, theo dõi tiến độ và tiếp tục hành trình với một giao diện tối giản, rõ ràng và chuyên nghiệp.</p>
+            <div class="hero-actions">
+                <a href="/learning/roadmap" class="btn" data-i18n="dashboard.actions.buildRoadmap">Tạo lộ trình</a>
+                <a href="/my-course" class="btn btn-secondary" data-i18n="dashboard.actions.learningTracks">Lộ trình học</a>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card fade-in-up">
+                <div class="stat-icon">✦</div>
+                <div class="stat-value">{{ stats.paths }}</div>
+                <h3 class="stat-label" data-i18n="dashboard.stats.activePaths.title">Lộ trình đang học</h3>
+                <p class="stat-description" data-i18n="dashboard.stats.activePaths.description">Số lộ trình học tập đang được theo dõi.</p>
+            </article>
+            <article class="stat-card fade-in-up">
+                <div class="stat-icon">⌘</div>
+                <div class="stat-value">{{ stats.courses }}</div>
+                <h3 class="stat-label" data-i18n="dashboard.stats.courses.title">Khóa học</h3>
+                <p class="stat-description" data-i18n="dashboard.stats.courses.description">Các khóa học thuộc lập trình, tiếng Trung và tiếng Anh.</p>
+            </article>
+            <article class="stat-card fade-in-up">
+                <div class="stat-icon">✓</div>
+                <div class="stat-value">{{ stats.completed_lessons }}</div>
+                <h3 class="stat-label" data-i18n="dashboard.stats.completedLessons.title">Bài đã hoàn thành</h3>
+                <p class="stat-description" data-i18n="dashboard.stats.completedLessons.description">Số bài học bạn đã đánh dấu hoàn tất.</p>
+            </article>
+            <article class="stat-card fade-in-up">
+                <div class="stat-icon">⏱</div>
+                <div class="stat-value">{{ current_user.weekly_hours or 1 }}h</div>
+                <h3 class="stat-label" data-i18n="dashboard.stats.weeklyGoal.title">Giờ học mỗi tuần</h3>
+                <p class="stat-description" data-i18n="dashboard.stats.weeklyGoal.description">Mục tiêu thời gian học bạn cam kết mỗi tuần.</p>
+            </article>
+        </section>
+
+        <section class="course-section">
+            <div class="section-head">
+                <div>
+                    <div class="page-eyebrow" data-i18n="dashboard.plan.eyebrow">Kế hoạch hiện tại</div>
+                    <h2 class="page-title" data-i18n="dashboard.plan.title">Lộ trình học tập cá nhân</h2>
+                </div>
+                <a class="btn btn-secondary" href="/learning/roadmap" data-i18n="dashboard.plan.edit">Chỉnh sửa lộ trình</a>
+            </div>
+
+            <div class="roadmap-timeline premium-timeline">
+                {% if roadmap_steps %}
+                    {% for step in roadmap_steps %}
+                    <article class="roadmap-item action-timeline-item {% if step.is_completed %}done{% endif %}" id="roadmap-step-{{ step.id }}">
+                        <div class="roadmap-badge-container">
+                            <div class="roadmap-badge-number">{{ '%02d' % (loop.index) }}</div>
+                        </div>
+                        <div class="roadmap-card-body">
+                            <div class="chip-row">
+                                <span class="chip phase-chip phase-{{ step.phase }}">{{ step.phase|title }}</span>
+                                <span class="chip type-chip type-{{ step.step_type }}">{{ step.step_type|title }}</span>
+                                <span class="chip">{{ step.estimated_days }}d</span>
+                            </div>
+                            <h3 class="card-title">{{ step.title }}</h3>
+                            <p class="muted">{{ step.description }}</p>
+
+                            <div class="roadmap-card-actions">
+                                {% if step.resource_hint %}
+                                <span class="resource-hint-text">
+                                    <span class="icon">💡</span> {{ step.resource_hint }}
+                                </span>
+                                {% else %}
+                                <span></span>
+                                {% endif %}
+                                {% if step.step_metadata and step.step_metadata.get('learning_resource') %}
+                                {% set resource = step.step_metadata.get('learning_resource') %}
+                                <a class="resource-link" href="{{ resource.url }}" target="_blank" rel="noopener noreferrer">
+                                    {{ resource.title }}
+                                    <span>{{ resource.provider }}</span>
+                                </a>
+                                {% endif %}
+                                <button type="button" class="btn-timeline-toggle" onclick="toggleStepCompletion({{ step.id }}, this)">
+                                    <span class="toggle-icon"></span>
+                                    <span class="toggle-text" data-i18n="{% if step.is_completed %}dashboard.roadmap.completed{% else %}dashboard.roadmap.markComplete{% endif %}">
+                                        {% if step.is_completed %}Hoàn thành{% else %}Đánh dấu hoàn thành{% endif %}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" data-i18n="dashboard.plan.empty">Chưa có lộ trình hoạt động. Tạo lộ trình để hệ thống gợi ý cường độ học và khóa học phù hợp.</div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="course-section">
+            <div class="section-head">
+                <div>
+                    <div class="page-eyebrow" data-i18n="dashboard.courses.eyebrow">Lộ trình học</div>
+                    <h2 class="page-title" data-i18n="dashboard.courses.title">Khóa học đang theo dõi</h2>
+                </div>
+                <a class="btn btn-secondary" href="/my-course" data-i18n="dashboard.courses.viewAll">Xem tất cả khóa học</a>
+            </div>
+
+            <div class="course-grid">
+                {% for course in courses %}
+                {% set progress = progress_map.get(course.id, 0) %}
+                <article class="course-card fade-in-up">
+                    <div class="course-thumb"></div>
+                    <div class="chip-row">
+                        <span class="chip">{{ course.category|title }}</span>
+                        <span class="chip">{{ course.level|title }}</span>
+                    </div>
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    <p class="muted">{{ course.summary }}</p>
+                    <div class="course-progress-row">
+                        <div class="course-meta">
+                            <span>{{ progress }}%</span>
+                            <span>{{ course.lessons|length }} <span data-i18n="dashboard.courses.lessons">bài học</span></span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: {{ progress }}%;"></div></div>
+                    </div>
+                    <div class="course-actions">
+                        <a href="/learning/session/{{ course.slug }}" class="btn" data-i18n="dashboard.courses.continue">Tiếp tục học</a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function toggleStepCompletion(stepId, button) {
+    try {
+        button.disabled = true;
+        const res = await fetch(`/api/learning/roadmap/steps/${stepId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!res.ok) {
+            throw new Error('Failed to update status');
+        }
+
+        const data = await res.json();
+        const card = document.getElementById(`roadmap-step-${stepId}`);
+        const label = button.querySelector('.toggle-text');
+
+        if (data.is_completed) {
+            card.classList.add('done');
+            window.SereinI18n.setText(label, 'dashboard.roadmap.completed');
+        } else {
+            card.classList.remove('done');
+            window.SereinI18n.setText(label, 'dashboard.roadmap.markComplete');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(window.SereinI18n.t('dashboard.roadmap.updateError'));
+    } finally {
+        button.disabled = false;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,381 @@
+{% extends 'learning/base.html' %}
+{% block title %}HSK 汉语 学习中心 | Serein{% endblock %}
+{% block head %}
+<style>
+/* ── HSK Page — cyberpunk-native styles ── */
+.hsk-hero { position: relative; overflow: hidden; }
+.hsk-hero::before { content: '汉'; position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); font-size: 8rem; font-weight: 800; opacity: .04; color: var(--primary-color, #00ff88); pointer-events: none; }
+
+.hsk-stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+.hsk-stat { background: var(--color-surface, #0b0b0b); border: 1px solid var(--color-border); border-radius: 16px; padding: 1.2rem 1rem; text-align: center; transition: border-color .2s, box-shadow .2s; }
+.hsk-stat:hover { border-color: rgba(0, 255, 136, 0.35); box-shadow: var(--shadow-neon); }
+.hsk-stat .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--primary-color, #00ff88); line-height: 1; }
+.hsk-stat .stat-lbl { font-size: .75rem; color: var(--color-text-secondary, #9ca3af); margin-top: .3rem; text-transform: uppercase; letter-spacing: .08em; }
+
+.hsk-tabs { display: flex; gap: .5rem; margin-bottom: 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0; }
+.hsk-tab { padding: .7rem 1.2rem; background: none; border: none; color: var(--color-text-secondary, #9ca3af); font-size: .88rem; font-weight: 600; cursor: pointer; border-radius: 8px 8px 0 0; transition: all .2s; position: relative; font-family: inherit; }
+.hsk-tab:hover { color: var(--color-text, #fff); background: rgba(0,255,136,.04); }
+.hsk-tab.active { color: var(--primary-color, #00ff88); background: rgba(0,255,136,.08); }
+.hsk-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--primary-color, #00ff88); border-radius: 2px 2px 0 0; }
+
+.hsk-filters { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.hsk-filter-btn { padding: .45rem .85rem; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(255,255,255,.025); color: var(--color-text-secondary, #9ca3af); font-size: .82rem; cursor: pointer; transition: all .2s; font-family: inherit; font-weight: 500; }
+.hsk-filter-btn:hover, .hsk-filter-btn.active { border-color: rgba(0,255,136,.35); color: var(--primary-color, #00ff88); background: rgba(0,255,136,.08); box-shadow: 0 0 12px rgba(0,255,136,.08); }
+.hsk-search { flex: 1; min-width: 180px; padding: .55rem 1rem; border-radius: 12px; border: 1px solid var(--color-border); background: var(--color-surface, #0b0b0b); color: var(--color-text, #fff); font-size: .88rem; font-family: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
+.hsk-search:focus { border-color: rgba(0,255,136,.4); box-shadow: 0 0 16px rgba(0,255,136,.1); }
+.hsk-search::placeholder { color: var(--color-text-secondary, #555); }
+
+.hsk-tab-content { display: none; }
+.hsk-tab-content.active { display: grid; gap: 1rem; }
+
+/* ── Vocab Cards ── */
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.vocab-card { background: var(--color-surface, #0b0b0b); border: 1px solid var(--color-border); border-radius: 16px; padding: 1.25rem; transition: all .25s; }
+.vocab-card:hover { border-color: rgba(0,255,136,.3); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.4), var(--shadow-neon); }
+.vocab-chinese { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: .2rem; color: var(--color-text, #fff); }
+.vocab-pinyin { font-size: .88rem; color: var(--primary-color, #00ff88); font-style: italic; margin-bottom: .5rem; font-family: var(--font-mono); }
+.vocab-meaning { font-size: .88rem; color: var(--color-text-secondary, #aaa); line-height: 1.5; }
+.vocab-meaning strong { color: var(--color-text, #eee); font-weight: 600; }
+.vocab-example { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--color-border); font-size: .82rem; color: var(--color-text-secondary, #888); }
+.vocab-example .zh { color: var(--color-text, #ccc); margin-bottom: .15rem; }
+.vocab-level-badge { display: inline-block; font-size: .7rem; font-weight: 700; padding: .18rem .55rem; border-radius: 999px; background: rgba(0,255,136,.08); color: var(--primary-color, #00ff88); border: 1px solid rgba(0,255,136,.15); margin-bottom: .5rem; font-family: var(--font-mono); letter-spacing: .04em; }
+
+/* ── Exam Cards ── */
+.exam-list { display: flex; flex-direction: column; gap: 1rem; }
+.exam-card { background: var(--color-surface, #0b0b0b); border: 1px solid var(--color-border); border-radius: 16px; padding: 1.25rem 1.5rem; transition: border-color .2s, box-shadow .2s; }
+.exam-card:hover { border-color: rgba(0,255,136,.3); box-shadow: var(--shadow-neon); }
+.exam-header { display: flex; gap: .5rem; align-items: center; margin-bottom: .6rem; flex-wrap: wrap; }
+.exam-badge { font-size: .7rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px; text-transform: uppercase; letter-spacing: .05em; font-family: var(--font-mono); }
+.exam-badge.listening { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.2); }
+.exam-badge.reading { background: rgba(0,255,136,.08); color: #00ff88; border: 1px solid rgba(0,255,136,.15); }
+.exam-badge.writing { background: rgba(245,158,11,.12); color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
+.exam-question-text { font-size: .92rem; color: var(--color-text, #ddd); line-height: 1.7; margin-bottom: .6rem; }
+.exam-options { display: flex; flex-direction: column; gap: .4rem; }
+.exam-option { width: 100%; min-height: 44px; text-align: left; font-size: .85rem; color: var(--color-text-secondary, #999); padding: .55rem .75rem; border-radius: 10px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); transition: all .2s; cursor: pointer; font-family: inherit; }
+.exam-option:hover, .exam-option:focus-visible { border-color: rgba(0,255,136,.2); background: rgba(0,255,136,.04); color: var(--color-text, #eee); outline: none; }
+.exam-option.selected { border-color: rgba(0,170,255,.42); background: rgba(0,170,255,.08); color: var(--color-text, #fff); }
+.exam-option.correct { border-color: rgba(0,255,136,.48); background: rgba(0,255,136,.12); color: var(--primary-color, #00ff88); }
+.exam-option.incorrect { border-color: rgba(255,76,76,.48); background: rgba(255,76,76,.10); color: #ff8a8a; }
+.exam-feedback { display: none; margin-top: .7rem; padding: .65rem .8rem; border-radius: 12px; font-size: .84rem; line-height: 1.5; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.025); color: var(--color-text-secondary, #aaa); }
+.exam-feedback.visible { display: block; }
+.exam-feedback.correct { border-color: rgba(0,255,136,.25); background: rgba(0,255,136,.07); color: var(--color-text, #eee); }
+.exam-feedback.incorrect { border-color: rgba(255,76,76,.25); background: rgba(255,76,76,.06); color: var(--color-text, #eee); }
+
+/* ── Reading Cards ── */
+.reading-list { display: flex; flex-direction: column; gap: 1rem; }
+.reading-card { background: var(--color-surface, #0b0b0b); border: 1px solid var(--color-border); border-radius: 16px; padding: 1.5rem; transition: border-color .2s, box-shadow .2s; }
+.reading-card:hover { border-color: rgba(0,255,136,.3); box-shadow: var(--shadow-neon); }
+.reading-title { font-size: 1.15rem; font-weight: 700; margin-bottom: .6rem; color: var(--color-text, #fff); }
+.reading-content { font-size: .95rem; color: var(--color-text, #ddd); line-height: 2; margin-bottom: .8rem; letter-spacing: .02em; }
+.reading-translation { font-size: .85rem; color: var(--color-text-secondary, #888); line-height: 1.7; padding-top: .8rem; border-top: 1px solid var(--color-border); }
+.reading-vocab-list { margin-top: .8rem; display: flex; flex-wrap: wrap; gap: .4rem; }
+.reading-vocab-tag { font-size: .75rem; padding: .2rem .55rem; border-radius: 999px; background: rgba(0,255,136,.06); color: var(--primary-color, #00ff88); border: 1px solid rgba(0,255,136,.12); font-family: var(--font-mono); }
+
+.hsk-empty { text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary, #666); font-size: .92rem; border: 1px dashed rgba(255,255,255,.1); border-radius: 16px; }
+.hsk-loading { text-align: center; padding: 2rem; color: var(--color-text-secondary, #666); }
+
+/* ── Toggle translation ── */
+.toggle-translation { padding: .4rem .8rem; border-radius: 999px; border: 1px solid var(--color-border); background: none; color: var(--color-text-secondary); font-size: .78rem; cursor: pointer; transition: all .2s; font-family: inherit; margin-top: .5rem; }
+.toggle-translation:hover { border-color: rgba(0,255,136,.3); color: var(--primary-color); }
+
+@media (max-width: 700px) {
+    .vocab-grid { grid-template-columns: 1fr; }
+    .hsk-stats-row { grid-template-columns: repeat(3, 1fr); }
+    .hsk-tabs { overflow-x: auto; gap: 0; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <!-- Hero -->
+        <section class="hero-card learning-panel hsk-hero">
+            <div class="hero-label">Trung tâm HSK</div>
+            <h1 class="hero-title-sm">Học tiếng Trung — luyện HSK theo từng cấp độ</h1>
+            <p class="hero-desc">Từ vựng HSK 1-6, đề thi luyện tập, và bài đọc hiểu. Tổng hợp từ nhiều nguồn uy tín để hỗ trợ hành trình chinh phục HSK của bạn.</p>
+        </section>
+
+        <!-- Stats -->
+        <div class="hsk-stats-row">
+            <div class="hsk-stat"><div class="stat-num" id="stat-vocab">—</div><div class="stat-lbl">Từ vựng</div></div>
+            <div class="hsk-stat"><div class="stat-num" id="stat-exams">—</div><div class="stat-lbl">Câu hỏi thi</div></div>
+            <div class="hsk-stat"><div class="stat-num" id="stat-reading">—</div><div class="stat-lbl">Bài đọc</div></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="hsk-tabs" role="tablist">
+            <button class="hsk-tab active" data-tab="vocab" role="tab" aria-selected="true">📖 Từ vựng</button>
+            <button class="hsk-tab" data-tab="exams" role="tab" aria-selected="false">📝 Đề thi</button>
+            <button class="hsk-tab" data-tab="reading" role="tab" aria-selected="false">📚 Bài đọc</button>
+        </div>
+
+        <!-- Vocabulary Tab -->
+        <div class="hsk-tab-content active" id="tab-vocab">
+            <div class="hsk-filters">
+                <button class="hsk-filter-btn active" data-level="all">Tất cả</button>
+                <button class="hsk-filter-btn" data-level="1">HSK 1</button>
+                <button class="hsk-filter-btn" data-level="2">HSK 2</button>
+                <button class="hsk-filter-btn" data-level="3">HSK 3</button>
+                <button class="hsk-filter-btn" data-level="4">HSK 4</button>
+                <button class="hsk-filter-btn" data-level="5">HSK 5</button>
+                <button class="hsk-filter-btn" data-level="6">HSK 6</button>
+                <input type="text" class="hsk-search" id="vocab-search" placeholder="🔍 Tìm kiếm từ vựng (汉字, pinyin, nghĩa)...">
+            </div>
+            <div class="vocab-grid" id="vocab-grid">
+                <div class="hsk-loading">Đang tải từ vựng...</div>
+            </div>
+        </div>
+
+        <!-- Exams Tab -->
+        <div class="hsk-tab-content" id="tab-exams">
+            <div class="hsk-filters">
+                <button class="hsk-filter-btn active" data-exam-level="all">Tất cả</button>
+                <button class="hsk-filter-btn" data-exam-level="1">HSK 1</button>
+                <button class="hsk-filter-btn" data-exam-level="2">HSK 2</button>
+                <button class="hsk-filter-btn" data-exam-level="3">HSK 3</button>
+            </div>
+            <div class="exam-list" id="exam-list">
+                <div class="hsk-loading">Đang tải đề thi...</div>
+            </div>
+        </div>
+
+        <!-- Reading Tab -->
+        <div class="hsk-tab-content" id="tab-reading">
+            <div class="hsk-filters">
+                <button class="hsk-filter-btn active" data-read-level="all">Tất cả</button>
+                <button class="hsk-filter-btn" data-read-level="1">HSK 1</button>
+                <button class="hsk-filter-btn" data-read-level="2">HSK 2</button>
+                <button class="hsk-filter-btn" data-read-level="3">HSK 3</button>
+            </div>
+            <div class="reading-list" id="reading-list">
+                <div class="hsk-loading">Đang tải bài đọc...</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const API = '/api/hsk';
+    let vocabData = [], examData = [], readingData = [];
+    let currentVocabLevel = 'all', currentExamLevel = 'all', currentReadLevel = 'all';
+
+    // ── Tab Switching ──
+    document.querySelectorAll('.hsk-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.hsk-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+            document.querySelectorAll('.hsk-tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+            document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ── Render Vocabulary ──
+    function renderVocab(data) {
+        const grid = document.getElementById('vocab-grid');
+        if (!data.length) { grid.innerHTML = '<div class="hsk-empty">Không tìm thấy từ vựng nào.</div>'; return; }
+        grid.innerHTML = data.map(v => {
+            const ex = v.example_sentences || {};
+            return `
+            <article class="vocab-card">
+                <span class="vocab-level-badge">HSK ${v.hsk_level}</span>
+                <div class="vocab-chinese">${esc(v.chinese)}</div>
+                <div class="vocab-pinyin">${esc(v.pinyin)}</div>
+                <div class="vocab-meaning">
+                    <strong>${esc(v.vietnamese || '')}</strong>
+                    ${v.english ? ' · ' + esc(v.english) : ''}
+                </div>
+                ${ex.zh ? '<div class="vocab-example"><div class="zh">' + esc(ex.zh) + '</div><div>' + esc(ex.vi || '') + '</div></div>' : ''}
+            </article>`;
+        }).join('');
+    }
+
+    // ── Render Exams ──
+    function renderExams(data) {
+        const list = document.getElementById('exam-list');
+        if (!data.length) { list.innerHTML = '<div class="hsk-empty">Không tìm thấy câu hỏi thi nào.</div>'; return; }
+        list.innerHTML = data.map(q => {
+            const correctAnswer = normalizeAnswer(q.correct_answer || '');
+            const options = Array.isArray(q.options) ? q.options : [];
+            return `
+            <article class="exam-card" data-correct-answer="${esc(correctAnswer)}" data-explanation="${esc(q.explanation || '')}">
+                <div class="exam-header">
+                    <span class="vocab-level-badge">HSK ${q.hsk_level}</span>
+                    <span class="exam-badge ${q.skill_type}">${esc(formatSkillType(q.skill_type))}</span>
+                    ${q.question_type ? '<span class="exam-badge" style="background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.2);">' + esc(formatQuestionType(q.question_type)) + '</span>' : ''}
+                </div>
+                <div class="exam-question-text">${esc(q.question_text)}</div>
+                ${options.length ? '<div class="exam-options">' + options.map((o, index) => {
+                    const optionKey = getOptionKey(o, index);
+                    return '<button type="button" class="exam-option" data-answer="' + esc(optionKey) + '">' + esc(o) + '</button>';
+                }).join('') + '</div><div class="exam-feedback" aria-live="polite"></div>' : ''}
+            </article>
+        `;
+        }).join('');
+    }
+
+    // ── Render Reading ──
+    function renderReading(data) {
+        const list = document.getElementById('reading-list');
+        if (!data.length) { list.innerHTML = '<div class="hsk-empty">Không tìm thấy bài đọc nào.</div>'; return; }
+        list.innerHTML = data.map(r => {
+            const vocabHtml = r.vocabulary_list
+                ? '<div class="reading-vocab-list">' + Object.entries(r.vocabulary_list).map(([k,v]) => '<span class="reading-vocab-tag">' + esc(k) + ': ' + esc(v) + '</span>').join('') + '</div>'
+                : '';
+            return `
+            <article class="reading-card">
+                <span class="vocab-level-badge">HSK ${r.hsk_level}</span>
+                <h3 class="reading-title">${esc(r.title)}</h3>
+                <div class="reading-content">${esc(r.content)}</div>
+                ${r.translation ? '<button class="toggle-translation" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'">Xem bản dịch ↕</button><div class="reading-translation" style="display:none">📖 ' + esc(r.translation) + '</div>' : ''}
+                ${vocabHtml}
+            </article>`;
+        }).join('');
+    }
+
+    // ── Escape HTML ──
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function normalizeAnswer(value) {
+        return String(value || '').trim().replace(/^[\s（(]*([A-D])[\s.、)）:-].*$/i, '$1').toUpperCase();
+    }
+
+    function getOptionKey(option, index) {
+        const text = String(option || '').trim();
+        const prefixed = text.match(/^([A-D])[\s.、)）:-]/i);
+        return prefixed ? prefixed[1].toUpperCase() : String.fromCharCode(65 + index);
+    }
+
+    function formatSkillType(value) {
+        return ({
+            listening: 'Nghe',
+            reading: 'Đọc',
+            writing: 'Viết',
+        })[String(value || '').toLowerCase()] || value;
+    }
+
+    function formatQuestionType(value) {
+        return ({
+            matching: 'Ghép đôi',
+            true_false: 'Đúng / Sai',
+            multiple_choice: 'Trắc nghiệm',
+            fill_blank: 'Điền chỗ trống',
+        })[String(value || '').toLowerCase()] || value;
+    }
+
+    document.getElementById('exam-list').addEventListener('click', (event) => {
+        const option = event.target.closest('.exam-option');
+        if (!option) return;
+
+        const card = option.closest('.exam-card');
+        const correctAnswer = card.dataset.correctAnswer;
+        const feedback = card.querySelector('.exam-feedback');
+        const isCorrect = correctAnswer && option.dataset.answer === correctAnswer;
+
+        card.querySelectorAll('.exam-option').forEach(btn => {
+            btn.classList.remove('selected', 'correct', 'incorrect');
+            if (correctAnswer && btn.dataset.answer === correctAnswer) {
+                btn.classList.add('correct');
+            }
+        });
+
+        option.classList.add('selected');
+        if (correctAnswer && !isCorrect) {
+            option.classList.add('incorrect');
+        }
+
+        if (feedback) {
+            const explanation = card.dataset.explanation;
+            feedback.className = 'exam-feedback visible ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect
+                ? (explanation || 'Chính xác. Bạn đã chọn đúng đáp án.')
+                : 'Chưa đúng. Đáp án đúng là ' + (correctAnswer || 'đáp án được lưu trong hệ thống') + (explanation ? '. ' + explanation : '.');
+        }
+    });
+
+    // ── Filter Logic ──
+    function filterVocab() {
+        const search = (document.getElementById('vocab-search').value || '').toLowerCase();
+        let filtered = vocabData;
+        if (currentVocabLevel !== 'all') filtered = filtered.filter(v => v.hsk_level == currentVocabLevel);
+        if (search) filtered = filtered.filter(v =>
+            v.chinese.includes(search) || v.pinyin.toLowerCase().includes(search) ||
+            (v.vietnamese || '').toLowerCase().includes(search) || (v.english || '').toLowerCase().includes(search)
+        );
+        renderVocab(filtered);
+    }
+
+    // ── Vocab Level Filters ──
+    document.querySelectorAll('[data-level]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-level]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentVocabLevel = btn.dataset.level;
+            filterVocab();
+        });
+    });
+
+    // ── Exam Level Filters ──
+    document.querySelectorAll('[data-exam-level]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-exam-level]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentExamLevel = btn.dataset.examLevel;
+            const filtered = currentExamLevel === 'all' ? examData : examData.filter(e => e.hsk_level == currentExamLevel);
+            renderExams(filtered);
+        });
+    });
+
+    // ── Reading Level Filters ──
+    document.querySelectorAll('[data-read-level]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-read-level]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentReadLevel = btn.dataset.readLevel;
+            const filtered = currentReadLevel === 'all' ? readingData : readingData.filter(r => r.hsk_level == currentReadLevel);
+            renderReading(filtered);
+        });
+    });
+
+    // ── Search ──
+    let searchTimer;
+    document.getElementById('vocab-search').addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(filterVocab, 250);
+    });
+
+    // ── Load Data ──
+    async function loadAll() {
+        try {
+            const [vocabRes, examRes, readRes, statsRes] = await Promise.all([
+                fetch(API + '/vocabulary'), fetch(API + '/exams'),
+                fetch(API + '/reading'), fetch(API + '/stats')
+            ]);
+            vocabData = await vocabRes.json();
+            examData = await examRes.json();
+            readingData = await readRes.json();
+            const stats = await statsRes.json();
+
+            document.getElementById('stat-vocab').textContent = stats.vocabulary?.total ?? vocabData.length;
+            document.getElementById('stat-exams').textContent = stats.exam_questions ?? examData.length;
+            document.getElementById('stat-reading').textContent = stats.reading_lessons ?? readingData.length;
+
+            renderVocab(vocabData);
+            renderExams(examData);
+            renderReading(readingData);
+        } catch (err) {
+            console.error('HSK load error:', err);
+            document.getElementById('vocab-grid').innerHTML = '<div class="hsk-empty">Lỗi tải dữ liệu. Vui lòng thử lại.</div>';
+        }
+    }
+
+    loadAll();
+})();
+</script>
+{% endblock %}

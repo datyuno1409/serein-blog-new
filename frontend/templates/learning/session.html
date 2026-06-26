@@ -1,0 +1,234 @@
+{% extends 'learning/base.html' %}
+{% block title %}{{ course.title }} | Serein Learning{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+        <div class="profile-card">
+            <div class="profile-avatar">{{ course.title[0]|upper }}</div>
+            <div>
+                <h2 class="profile-name">{{ course.title }}</h2>
+                <p class="profile-desc">{{ course.language|upper }} · {{ course.level|title }}</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="sidebar-link" href="/learning"><span data-lang-vi>Học tập</span><span data-lang-en>Learning</span></a>
+            <a class="sidebar-link" href="/my-course"><span data-lang-vi>Khóa học</span><span data-lang-en>Courses</span></a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-content">
+        <section class="hero-card learning-panel">
+            <div class="hero-label"><span data-lang-vi>Phiên học</span><span data-lang-en>Learning session</span></div>
+            <h1 class="hero-title-sm">{{ course.title }}</h1>
+            <p class="hero-desc">{{ course.summary }}</p>
+            <div class="hero-actions">
+                <span class="chip">{{ course.estimated_hours }} <span data-lang-vi>giờ</span><span data-lang-en>hours</span></span>
+                <span class="chip">{{ course.lessons|length }} <span data-lang-vi>bài học</span><span data-lang-en>lessons</span></span>
+            </div>
+        </section>
+
+        <div class="lesson-grid">
+            {% for lesson in lessons %}
+            {% set lesson_progress = lesson_progress_map.get(lesson.id) %}
+            <article class="lesson-card" data-lesson-id="{{ lesson.id }}" data-type="{{ lesson.lesson_type }}">
+                <div class="chip-row">
+                    <span class="chip">{{ lesson.lesson_type|title }}</span>
+                    <span class="chip">{{ lesson.duration_minutes }} <span data-lang-vi>phút</span><span data-lang-en>min</span></span>
+                    <span class="chip">+{{ lesson.xp_reward }} XP</span>
+                </div>
+                <h3 class="card-title">{{ lesson.title }}</h3>
+                <p class="muted">{{ lesson.description }}</p>
+
+                <div class="lesson-stage-row">
+                    <span class="feature-pill">
+                        {% if lesson.lesson_type == 'flashcard' %}<span data-lang-vi>Ghi nhớ nhanh</span><span data-lang-en>Rapid recall</span>{% elif lesson.lesson_type == 'writing' %}<span data-lang-vi>Luyện đầu ra</span><span data-lang-en>Output practice</span>{% elif lesson.lesson_type == 'quiz' %}<span data-lang-vi>Kiểm tra hiểu bài</span><span data-lang-en>Comprehension check</span>{% elif lesson.lesson_type == 'hanzi' %}<span data-lang-vi>Luyện nét chữ</span><span data-lang-en>Stroke practice</span>{% else %}Practice{% endif %}
+                    </span>
+                    {% if lesson_progress and lesson_progress.status == 'completed' %}<span class="feature-pill success-pill"><span data-lang-vi>Đã hoàn thành</span><span data-lang-en>Completed</span></span>{% endif %}
+                </div>
+
+                {% if lesson.lesson_type == 'flashcard' %}
+                <div class="flashcard-stack">
+                    {% for card in lesson.flashcards %}
+                    <div class="flashcard" data-card-index="{{ loop.index0 }}">
+                        <div class="flashcard-face flashcard-front">{{ card.front_text }}</div>
+                        <div class="flashcard-face flashcard-back" hidden>
+                            <div>{{ card.back_text }}</div>
+                            {% if card.pronunciation %}<div class="muted">{{ card.pronunciation }}</div>{% endif %}
+                            {% if card.example %}<div class="muted">{{ card.example }}</div>{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="flashcard-counter muted"></div>
+                <div class="flashcard-actions">
+                    <button class="btn btn-secondary" data-action="prev-card"><span data-lang-vi>Trước</span><span data-lang-en>Prev</span></button>
+                    <button class="btn" data-action="flip"><span data-lang-vi>Lật thẻ</span><span data-lang-en>Flip</span></button>
+                    <button class="btn btn-secondary" data-action="next-card"><span data-lang-vi>Tiếp</span><span data-lang-en>Next</span></button>
+                    <button class="btn btn-secondary" data-action="save-progress"><span data-lang-vi>Hoàn thành</span><span data-lang-en>Complete</span></button>
+                </div>
+                {% elif lesson.lesson_type == 'writing' %}
+                <textarea class="form-textarea practice-box" placeholder="Write your practice here..." data-writing></textarea>
+                <div class="flashcard-actions">
+                    <button class="btn" data-action="save-writing"><span data-lang-vi>Lưu bài viết</span><span data-lang-en>Save writing</span></button>
+                    <button class="btn btn-secondary" data-action="save-progress"><span data-lang-vi>Đánh dấu hoàn thành</span><span data-lang-en>Mark complete</span></button>
+                </div>
+                {% elif lesson.lesson_type == 'hanzi' %}
+                <div class="hanzi-practice-box">
+                    <div class="chip-row"><span class="chip">Hanzi Writer</span><span class="chip"><span data-lang-vi>Luyện viết nét</span><span data-lang-en>Stroke practice</span></span></div>
+                    <div class="hanzi-grid" data-hanzi-grid>
+                        {% for char in lesson.content_json.get('hanzi', []) if lesson.content_json %}
+                        <div class="hanzi-char-wrap">
+                            <div class="hanzi-target" data-char="{{ char }}" id="hanzi-{{ lesson.id }}-{{ loop.index0 }}"></div>
+                            <div class="hanzi-label">{{ char }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="flashcard-actions">
+                        <button class="btn" data-action="animate-hanzi"><span data-lang-vi>Xem hoạt ảnh nét</span><span data-lang-en>Animate strokes</span></button>
+                        <button class="btn btn-secondary" data-action="quiz-hanzi"><span data-lang-vi>Tập viết</span><span data-lang-en>Practice writing</span></button>
+                        <button class="btn btn-secondary" data-action="save-progress"><span data-lang-vi>Hoàn thành</span><span data-lang-en>Complete</span></button>
+                    </div>
+                </div>
+                {% elif lesson.lesson_type == 'quiz' %}
+                <div class="quiz-box" data-quiz-box data-lesson-id="{{ lesson.id }}">
+                    {% for q in lesson.quiz_questions|sort(attribute='order_index') %}
+                    <div class="quiz-question" data-qid="{{ q.id }}" data-qtype="{{ q.question_type }}" {% if not loop.first %}hidden{% endif %}>
+                        <p class="quiz-q-text"><strong>Q{{ loop.index }}.</strong> {{ q.question_text }}</p>
+                        {% if q.question_type == 'multiple_choice' %}
+                        <div class="quiz-options">
+                            {% for opt in q.options %}
+                            <button class="btn quiz-opt" data-value="{{ opt }}">{{ opt }}</button>
+                            {% endfor %}
+                        </div>
+                        {% elif q.question_type == 'fill_blank' %}
+                        <div class="quiz-fill">
+                            <input type="text" class="form-input quiz-input" placeholder="Type your answer..." />
+                            <button class="btn quiz-check-btn"><span data-lang-vi>Kiểm tra</span><span data-lang-en>Check</span></button>
+                        </div>
+                        {% endif %}
+                        <div class="quiz-feedback" hidden></div>
+                    </div>
+                    {% endfor %}
+                    <div class="quiz-nav flashcard-actions">
+                        <span class="quiz-progress-text muted"></span>
+                        <button class="btn btn-secondary" data-action="quiz-next" disabled><span data-lang-vi>Câu tiếp</span><span data-lang-en>Next</span></button>
+                        <button class="btn" data-action="quiz-submit" hidden><span data-lang-vi>Nộp bài</span><span data-lang-en>Submit</span></button>
+                    </div>
+                    <div class="quiz-result" hidden></div>
+                </div>
+                {% else %}
+                <div class="flashcard-actions">
+                    <button class="btn" data-action="save-progress"><span data-lang-vi>Đánh dấu hoàn thành</span><span data-lang-en>Mark complete</span></button>
+                </div>
+                {% endif %}
+
+                <p class="form-help muted" data-feedback></p>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script>
+document.querySelectorAll('.lesson-card').forEach((card) => {
+    const lessonId = card.dataset.lessonId;
+    const feedback = card.querySelector('[data-feedback]');
+    let cardIndex = 0;
+    const flashcards = card.querySelectorAll('.flashcard');
+    const counter = card.querySelector('.flashcard-counter');
+
+    function setFeedback(msg, err) { feedback.textContent = msg; feedback.className = err ? 'form-error' : 'form-success'; }
+    function showCard(idx) {
+        flashcards.forEach((f, i) => { f.style.display = i === idx ? '' : 'none'; f.querySelector('.flashcard-front').hidden = false; f.querySelector('.flashcard-back').hidden = true; });
+        if (counter) counter.textContent = (idx + 1) + ' / ' + flashcards.length;
+    }
+    if (flashcards.length) showCard(0);
+
+    async function saveProgress(status) {
+        try {
+            const r = await fetch('/api/learning/lessons/' + lessonId + '/progress', { method: 'POST', headers: {'Content-Type':'application/json'}, credentials: 'include', body: JSON.stringify({status}) });
+            const d = await r.json().catch(() => ({message:'Saved'})); setFeedback(d.message||'Saved',!r.ok);
+        } catch(e) { setFeedback('Network error',true); }
+    }
+
+    card.querySelectorAll('[data-action="flip"]').forEach(b => b.addEventListener('click', () => {
+        const f = flashcards[cardIndex]; if(!f) return;
+        f.querySelector('.flashcard-front').hidden = !f.querySelector('.flashcard-front').hidden;
+        f.querySelector('.flashcard-back').hidden = !f.querySelector('.flashcard-back').hidden;
+    }));
+    card.querySelectorAll('[data-action="next-card"]').forEach(b => b.addEventListener('click', () => { if(flashcards.length) { cardIndex = (cardIndex+1)%flashcards.length; showCard(cardIndex); } }));
+    card.querySelectorAll('[data-action="prev-card"]').forEach(b => b.addEventListener('click', () => { if(flashcards.length) { cardIndex = (cardIndex-1+flashcards.length)%flashcards.length; showCard(cardIndex); } }));
+    card.querySelectorAll('[data-action="save-progress"]').forEach(b => b.addEventListener('click', () => saveProgress('completed')));
+    card.querySelectorAll('[data-action="save-writing"]').forEach(b => b.addEventListener('click', async () => {
+        const wb = card.querySelector('[data-writing]');
+        try { const r = await fetch('/api/learning/lessons/'+lessonId+'/progress',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({writing_submission:wb.value,status:'in_progress'})}); const d=await r.json().catch(()=>({message:'Saved'})); setFeedback(d.message||'Saved',!r.ok); } catch(e){setFeedback('Network error',true);}
+    }));
+
+    /* === Hanzi Writer === */
+    const hanziWriters = [];
+    card.querySelectorAll('.hanzi-target').forEach(el => {
+        const ch = el.dataset.char;
+        try {
+            const w = HanziWriter.create(el.id, ch, { width: 120, height: 120, padding: 8, showOutline: true, strokeAnimationSpeed: 1, delayBetweenStrokes: 200, radicalColor: '#00e5ff' });
+            hanziWriters.push(w);
+        } catch(e) { el.textContent = ch; }
+    });
+    card.querySelectorAll('[data-action="animate-hanzi"]').forEach(b => b.addEventListener('click', () => hanziWriters.forEach(w => w.animateCharacter())));
+    card.querySelectorAll('[data-action="quiz-hanzi"]').forEach(b => b.addEventListener('click', () => hanziWriters.forEach(w => w.quiz())));
+
+    /* === Interactive Quiz === */
+    const quizBox = card.querySelector('[data-quiz-box]');
+    if (quizBox) {
+        const questions = quizBox.querySelectorAll('.quiz-question');
+        const nextBtn = quizBox.querySelector('[data-action="quiz-next"]');
+        const submitBtn = quizBox.querySelector('[data-action="quiz-submit"]');
+        const progressText = quizBox.querySelector('.quiz-progress-text');
+        const resultBox = quizBox.querySelector('.quiz-result');
+        let qIdx = 0, answers = {};
+        function updateProgress() { progressText.textContent = (qIdx+1)+'/'+questions.length; }
+        updateProgress();
+
+        questions.forEach(qEl => {
+            const qid = qEl.dataset.qid, qtype = qEl.dataset.qtype;
+            const fb = qEl.querySelector('.quiz-feedback');
+            if (qtype === 'multiple_choice') {
+                qEl.querySelectorAll('.quiz-opt').forEach(opt => opt.addEventListener('click', () => {
+                    qEl.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected'); answers[qid] = opt.dataset.value;
+                    nextBtn.disabled = false;
+                }));
+            } else {
+                const checkBtn = qEl.querySelector('.quiz-check-btn');
+                const input = qEl.querySelector('.quiz-input');
+                checkBtn.addEventListener('click', () => { answers[qid] = input.value; nextBtn.disabled = false; });
+                input.addEventListener('keydown', e => { if(e.key==='Enter'){ answers[qid]=input.value; nextBtn.disabled=false; } });
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (qIdx < questions.length - 1) {
+                questions[qIdx].hidden = true; qIdx++; questions[qIdx].hidden = false;
+                nextBtn.disabled = true; updateProgress();
+                if (qIdx === questions.length - 1) { submitBtn.hidden = false; }
+            }
+        });
+
+        submitBtn.addEventListener('click', async () => {
+            try {
+                const r = await fetch('/api/learning/lessons/'+quizBox.dataset.lessonId+'/quiz/submit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({answers})});
+                const d = await r.json();
+                resultBox.hidden = false;
+                resultBox.innerHTML = '<div class="quiz-score"><strong>Score: '+d.score+'%</strong> ('+d.correct+'/'+d.total+')</div>';
+                d.results.forEach(res => {
+                    const cls = res.is_correct ? 'form-success' : 'form-error';
+                    resultBox.innerHTML += '<div class="'+cls+'">Q'+res.question_id+': '+(res.is_correct?'✓':'✗ → '+res.correct_answer)+(res.explanation?' — '+res.explanation:'')+'</div>';
+                });
+                submitBtn.hidden = true; nextBtn.hidden = true;
+            } catch(e) { setFeedback('Error submitting quiz',true); }
+        });
+    }
+});
+</script>
+{% endblock %}

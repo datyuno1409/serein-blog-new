@@ -1,0 +1,85 @@
+﻿{% extends 'learning/base.html' %}
+{% block title %}My Course | Serein Learning{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <section class="hero-card learning-panel">
+            <div class="hero-label" data-i18n="courses.hero.label">Tổng quan khóa học</div>
+            <h1 class="hero-title-sm" data-i18n="courses.hero.title">Tất cả lộ trình học</h1>
+            <p class="hero-desc" data-i18n="courses.hero.description">Khóa học được chia theo Lập trình, Java Backend, Tiếng Anh và Tiếng Trung, có flashcard, quiz, luyện viết và bài thực hành.</p>
+            <div class="hero-actions">
+                <a href="/learning/roadmap" class="btn" data-i18n="courses.hero.createRoadmap">Tạo roadmap mới</a>
+                {% if active_path %}<span class="chip">{{ active_path.pace }}</span>{% endif %}
+            </div>
+        </section>
+
+        <section class="course-section">
+            <div class="section-head">
+                <div>
+                    <div class="page-eyebrow" data-i18n="courses.section.label">Khóa học</div>
+                    <h2 class="page-title" data-i18n="courses.section.title">Tiếp tục từ nơi bạn dừng</h2>
+                </div>
+            </div>
+            <div class="track-filter" role="group" aria-label="Course filters">
+                <button type="button" class="track-filter-btn active" data-course-filter="all" data-i18n="courses.filters.all">Tất cả</button>
+                <button type="button" class="track-filter-btn" data-course-filter="programming" data-i18n="courses.filters.programming">Lập trình</button>
+                <button type="button" class="track-filter-btn" data-course-filter="java" data-i18n="courses.filters.java">Java Backend</button>
+                <button type="button" class="track-filter-btn" data-course-filter="english" data-i18n="courses.filters.english">Tiếng Anh</button>
+                <button type="button" class="track-filter-btn" data-course-filter="chinese" data-i18n="courses.filters.chinese">Tiếng Trung</button>
+            </div>
+            <div class="course-grid">
+                {% for course in courses %}
+                {% set progress = progress_map.get(course.id, 0) %}
+                {% set course_filter = 'java' if 'java' in (course.tags or []) else 'english' if course.language == 'en' and course.category == 'language' else 'chinese' if course.language == 'zh' else 'programming' %}
+                <article class="course-card fade-in-up" data-course-domain="{{ course_filter }}">
+                    <div class="course-thumb course-thumb-{{ course.category }}"></div>
+                    <div class="chip-row">
+                        <span class="chip">{{ course.category|title }}</span>
+                        <span class="chip">{{ course.language|upper }}</span>
+                        <span class="chip">{{ course.level|title }}</span>
+                    </div>
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    <p class="muted">{{ course.summary }}</p>
+                    <div class="course-feature-list">
+                        {% if course.tags %}
+                            {% for tag in course.tags[:3] %}
+                            <span class="feature-pill">{{ tag }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="course-progress-row">
+                        <div class="course-meta">
+                            <span>{{ progress }}%</span>
+                            <span>{{ course.estimated_hours }}h</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: {{ progress }}%;"></div></div>
+                    </div>
+                    <div class="course-actions">
+                        <a href="/learning/session/{{ course.slug }}" class="btn" data-i18n="courses.continue">Tiếp tục học</a>
+                    </div>
+                </article>
+                {% else %}
+                <div class="empty-state" data-i18n="courses.empty">Chưa có khóa học nào. Hãy tạo roadmap để hệ thống gợi ý khóa học phù hợp.</div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.querySelectorAll('[data-course-filter]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const filter = button.dataset.courseFilter;
+            document.querySelectorAll('[data-course-filter]').forEach((item) => {
+                item.classList.toggle('active', item === button);
+            });
+            document.querySelectorAll('[data-course-domain]').forEach((card) => {
+                card.hidden = filter !== 'all' && card.dataset.courseDomain !== filter;
+            });
+        });
+    });
+</script>
+{% endblock %}

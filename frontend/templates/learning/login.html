@@ -1,0 +1,77 @@
+﻿{% extends 'learning/base.html' %}
+{% block title %}Login | Serein Learning{% endblock %}
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-panel">
+        <div class="auth-aside">
+            <div class="page-eyebrow"><span data-lang-vi>Trung tâm học tập</span><span data-lang-en>Learning Hub</span></div>
+            <h1 class="page-title"><span data-lang-vi>Đăng nhập để tiếp tục lộ trình học</span><span data-lang-en>Log in to continue your learning journey</span></h1>
+            <p class="page-summary"><span data-lang-vi>Theo dõi tiến độ riêng cho từng người dùng, học Python, tiếng Trung và tiếng Anh với flashcard và luyện viết.</span><span data-lang-en>Track personal progress and study Python, Chinese, and English with flashcards and writing practice.</span></p>
+            <div class="section-stack">
+                <div class="course-card">
+                    <div class="card-title">My Profile</div>
+                    <p class="muted"><span data-lang-vi>Lưu mục tiêu học tập, quỹ thời gian mỗi tuần và hồ sơ cá nhân.</span><span data-lang-en>Store your learning goals, weekly hours, and personal profile.</span></p>
+                </div>
+                <div class="course-card">
+                    <div class="card-title">Learning</div>
+                    <p class="muted"><span data-lang-vi>Flashcard, luyện viết và bài học ngôn ngữ/lập trình trong một dashboard mượt mà.</span><span data-lang-en>Flashcards, writing practice, and language/coding lessons in one smooth dashboard.</span></p>
+                </div>
+                <div class="course-card">
+                    <div class="card-title">My Course</div>
+                    <p class="muted"><span data-lang-vi>Tiến độ từng khóa học được lưu theo tài khoản, không bị mất khi đăng xuất.</span><span data-lang-en>Course progress is saved per account and stays after logout.</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="learning-panel">
+            <div class="page-eyebrow"><span data-lang-vi>Chào mừng trở lại</span><span data-lang-en>Welcome Back</span></div>
+            <h2 class="page-title"><span data-lang-vi>Đăng nhập</span><span data-lang-en>Log in</span></h2>
+            <p id="loginMessage" class="form-help muted" data-i18n-title-vi="Dùng tài khoản của bạn để vào dashboard học tập." data-i18n-title-en="Use your account to enter the learning dashboard."><span data-lang-vi>Dùng tài khoản của bạn để vào dashboard học tập.</span><span data-lang-en>Use your account to enter the learning dashboard.</span></p>
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="username"><span data-lang-vi>Tên đăng nhập</span><span data-lang-en>Username</span></label>
+                    <input class="form-input" id="username" name="username" required data-i18n-placeholder-vi="Nhập tên đăng nhập" data-i18n-placeholder-en="Enter username" placeholder="Nhập tên đăng nhập">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password"><span data-lang-vi>Mật khẩu</span><span data-lang-en>Password</span></label>
+                    <input class="form-input" id="password" name="password" type="password" required data-i18n-placeholder-vi="Nhập mật khẩu" data-i18n-placeholder-en="Enter password" placeholder="Nhập mật khẩu">
+                </div>
+                <div class="auth-actions">
+                    <button class="btn" type="submit"><span data-lang-vi>Đăng nhập</span><span data-lang-en>Login</span></button>
+                    <a class="btn btn-secondary" href="/register"><span data-lang-vi>Tạo tài khoản</span><span data-lang-en>Create account</span></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const message = document.getElementById('loginMessage');
+        const params = new URLSearchParams();
+        params.append('username', form.username.value);
+        params.append('password', form.password.value);
+
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params,
+            credentials: 'include'
+        });
+
+        const currentLang = document.documentElement.getAttribute('data-lang') || 'vi';
+        if (response.ok) {
+            message.className = 'form-success';
+            message.textContent = currentLang === 'vi' ? 'Đăng nhập thành công. Đang chuyển tới dashboard...' : 'Login successful. Redirecting to dashboard...';
+            window.location.href = '/learning';
+            return;
+        }
+
+        const data = await response.json().catch(() => ({ detail: currentLang === 'vi' ? 'Đăng nhập thất bại' : 'Login failed' }));
+        message.className = 'form-error';
+        message.textContent = data.detail || (currentLang === 'vi' ? 'Đăng nhập thất bại' : 'Login failed');
+    });
+</script>
+{% endblock %}

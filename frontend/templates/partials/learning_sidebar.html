@@ -1,0 +1,48 @@
+<aside class="dashboard-sidebar learning-sidebar-panel">
+    <div class="profile-card learning-sidebar-profile">
+        <div class="profile-avatar">{{ (current_user.full_name or current_user.username)[0]|upper }}</div>
+        <div>
+            <h2 class="profile-name">{{ current_user.full_name or current_user.username }}</h2>
+            {% if current_user.learning_goal %}
+            <p class="profile-desc">{{ current_user.learning_goal }}</p>
+            {% else %}
+            <p class="profile-desc" data-i18n="dashboard.defaultGoal">Người học đa kỹ năng đang xây dựng lộ trình cá nhân.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <nav class="sidebar-nav learning-sidebar-nav" aria-label="Learning navigation">
+        <a class="sidebar-link {% if nav_active == 'learning' %}active{% endif %}" href="/learning" {% if nav_active == 'learning' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.dashboard">Học tập</span>
+            <span class="sidebar-meta">{{ stats.paths if stats is defined else '01' }}</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'roadmap' %}active{% endif %}" href="/learning/roadmap" {% if nav_active == 'roadmap' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.roadmap">Tạo lộ trình</span>
+            <span class="sidebar-meta">{{ roadmap_steps|length if roadmap_steps is defined else 'AI' }}</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'courses' %}active{% endif %}" href="/my-course" {% if nav_active == 'courses' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.courses">Khóa học</span>
+            <span class="sidebar-meta">{{ courses|length if courses is defined else '04' }}</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'exam' %}active{% endif %}" href="/learning/exam" {% if nav_active == 'exam' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.exam">Phòng thi</span>
+            <span class="sidebar-meta">EX</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'hsk' %}active{% endif %}" href="/learning/hsk" {% if nav_active == 'hsk' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.hsk">HSK 汉语</span>
+            <span class="sidebar-meta">中</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'qna' %}active{% endif %}" href="/learning/qna" {% if nav_active == 'qna' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.forum">Diễn đàn</span>
+            <span class="sidebar-meta">↗</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'chatbot' %}active{% endif %}" href="/learning/chatbot" {% if nav_active == 'chatbot' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.aiAssistant">Trợ lý AI</span>
+            <span class="sidebar-meta">AI</span>
+        </a>
+        <a class="sidebar-link {% if nav_active == 'my-profile' %}active{% endif %}" href="/my-profile" {% if nav_active == 'my-profile' %}aria-current="page"{% endif %}>
+            <span data-i18n="sidebar.profile">Hồ sơ</span>
+            <span class="sidebar-meta">→</span>
+        </a>
+    </nav>
+</aside>

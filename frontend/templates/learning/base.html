@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" data-lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+        (function() {
+            const savedLang = localStorage.getItem('serein_lang') || 'vi';
+            const resolved = savedLang === 'en' ? 'en' : 'vi';
+            document.documentElement.setAttribute('data-lang', resolved);
+            document.documentElement.setAttribute('lang', resolved);
+        })();
+    </script>
+    <style>
+        [data-lang-vi],
+        [data-lang-en] {
+            display: none !important;
+        }
+
+        html[data-lang="vi"] [data-lang-vi],
+        html[data-lang="en"] [data-lang-en] {
+            display: inline !important;
+        }
+
+        html[data-lang="vi"] [data-lang-vi].lang-block,
+        html[data-lang="en"] [data-lang-en].lang-block {
+            display: block !important;
+        }
+
+        html[data-lang="vi"] [data-lang-vi].lang-flex,
+        html[data-lang="en"] [data-lang-en].lang-flex {
+            display: flex !important;
+        }
+
+        html[data-lang="vi"] [data-lang-vi].lang-inline-flex,
+        html[data-lang="en"] [data-lang-en].lang-inline-flex {
+            display: inline-flex !important;
+        }
+    </style>
+
+    <title>{% block title %}Serein Learning{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=20260626-ui-font">
+    <link rel="stylesheet" href="/assets/css/learning.css?v=20260626-ui-font">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    {% block head %}{% endblock %}
+</head>
+<body class="learning-shell app-shell">
+    <div class="scroll-progress"></div>
+    {% include 'partials/navbar.html' %}
+
+    <main class="app-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/assets/js/script.js?v=20260626-ui-font"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

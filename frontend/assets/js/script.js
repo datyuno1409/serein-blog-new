@@ -1,917 +1,357 @@
-// API functions
-async function fetchAPI(endpoint) {
+const SEREIN_LANG_KEY = 'serein_lang';
+const SEREIN_I18N_PATH = '/assets/i18n';
+const SEREIN_TRANSLATION_CACHE = {};
+
+function getCurrentLanguage() {
+    return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'vi';
+}
+
+function getStoredLanguage() {
+    return localStorage.getItem(SEREIN_LANG_KEY) === 'en' ? 'en' : 'vi';
+}
+
+async function loadTranslations(language) {
+    const resolved = language === 'en' ? 'en' : 'vi';
+    if (SEREIN_TRANSLATION_CACHE[resolved]) {
+        return SEREIN_TRANSLATION_CACHE[resolved];
+    }
+
     try {
-        const response = await fetch(`api.php?endpoint=${endpoint}`);
+        const response = await fetch(`${SEREIN_I18N_PATH}/${resolved}.json`, { cache: 'no-cache' });
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Failed to load ${resolved} translations`);
         }
-        return await response.json();
+        const translations = await response.json();
+        SEREIN_TRANSLATION_CACHE[resolved] = translations;
+        return translations;
     } catch (error) {
-        console.error('API Error:', error);
-        return null;
+        console.error(error);
+        SEREIN_TRANSLATION_CACHE[resolved] = {};
+        return SEREIN_TRANSLATION_CACHE[resolved];
     }
 }
 
-// Load about data
-async function loadAboutData() {
-    console.log('loadAboutData called');
-    const aboutContainer = document.getElementById('about-content');
-    const loadingElement = document.getElementById('about-loading');
-    
-    if (!aboutContainer) {
-        console.log('about-content container not found');
-        return;
-    }
-    
-    console.log('Fetching about data...');
-    const data = await fetchAPI('about');
-    console.log('About data received:', data);
-    if (data && data.success) {
-        // Hide loading and show content
-        if (loadingElement) loadingElement.style.display = 'none';
-        aboutContainer.style.display = 'block';
-        
-        aboutContainer.innerHTML = `
-            <div class="profile-content">
-                <div>${data.data.content}</div>
-            </div>
-        `;
-        
-        // Load skills
-        const skillsContainer = document.getElementById('skills-content');
-        if (skillsContainer && data.data.skills) {
-            const skills = JSON.parse(data.data.skills);
-            let skillsHTML = '<div class="skills-grid">';
-            
-            for (const [skill, percentage] of Object.entries(skills)) {
-                const skillName = skill.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                skillsHTML += `
-                    <div class="skill-item">
-                        <div class="skill-name">${skillName}</div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-percentage="${percentage}"></div>
-                        </div>
-                        <div class="skill-percentage">${percentage}%</div>
-                    </div>
-                `;
-            }
-            
-            skillsHTML += '</div>';
-            skillsContainer.innerHTML = skillsHTML;
-            
-            // Animate skill bars after loading
-            setTimeout(animateSkillBars, 500);
-        }
-    } else {
-        // Handle error case
-        console.log('Failed to load about data');
-        if (loadingElement) loadingElement.style.display = 'none';
-        aboutContainer.style.display = 'block';
-        aboutContainer.innerHTML = '<div class="error-message">Failed to load profile data. Please try again later.</div>';
+function translate(key, translations = SEREIN_TRANSLATION_CACHE[getCurrentLanguage()] || {}) {
+    return translations[key] || key;
+}
+
+function setI18nText(element, key, translations) {
+    const value = translate(key, translations);
+    if (value !== key) {
+        element.textContent = value;
     }
 }
 
-// Animate skill bars
-function animateSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const percentage = entry.target.dataset.percentage;
-                entry.target.style.width = percentage + '%';
-            }
-        });
-    });
-    
-    skillBars.forEach(bar => {
-        observer.observe(bar);
-    });
-}
-
-// Typewriter effect function
-function typeWriter(element, text, speed = 50) {
-    console.log('typeWriter called with text:', text);
-    let i = 0;
-    element.innerHTML = '';
-    element.style.borderRight = '2px solid var(--primary-color)';
-    
-    // Ensure proper text wrapping
-    element.style.whiteSpace = 'pre-wrap';
-    element.style.wordWrap = 'break-word';
-    element.style.lineHeight = '1.4';
-    
-    function type() {
-        if (i < text.length) {
-            const char = text.charAt(i);
-            element.innerHTML += char;
-            i++;
-            
-            // Adjust speed for natural typing rhythm
-            const nextSpeed = char === ' ' ? speed * 0.5 : 
-                            char === '\n' ? speed * 2 : 
-                            char.match(/[.!?]/) ? speed * 3 : speed;
-            
-            setTimeout(type, nextSpeed);
-        } else {
-            console.log('Typewriter animation completed');
-            element.style.animation = 'blink-caret 0.75s step-end infinite';
-        }
-    }
-    
-    type();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Script loaded and DOM ready');
-    
-    // Mobile menu toggle with enhanced animation
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    
-    if (mobileMenuToggle && navMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            mobileMenuToggle.classList.toggle('active');
-            
-            // Add rotation animation to toggle button
-            if (navMenu.classList.contains('active')) {
-                mobileMenuToggle.style.transform = 'rotate(90deg)';
-                document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+function applyLegacyLanguageVisibility(language) {
+    document.querySelectorAll('[data-lang-vi], [data-lang-en]').forEach((element) => {
+        const shouldShow = language === 'vi'
+            ? element.hasAttribute('data-lang-vi')
+            : element.hasAttribute('data-lang-en');
+        element.hidden = !shouldShow;
+        if (shouldShow) {
+            if (element.classList.contains('lang-flex')) {
+                element.style.setProperty('display', 'flex', 'important');
+            } else if (element.classList.contains('lang-inline-flex')) {
+                element.style.setProperty('display', 'inline-flex', 'important');
+            } else if (element.classList.contains('lang-block')) {
+                element.style.setProperty('display', 'block', 'important');
             } else {
-                mobileMenuToggle.style.transform = 'rotate(0deg)';
-                document.body.style.overflow = 'auto';
+                element.style.setProperty('display', 'inline', 'important');
             }
-        });
-        
-        // Close mobile menu when clicking on nav links
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    mobileMenuToggle.style.transform = 'rotate(0deg)';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        });
-        
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            const navbar = document.querySelector('.navbar');
-            if (navMenu.classList.contains('active') && 
-                navbar && !navbar.contains(e.target)) {
-                navMenu.classList.remove('active');
-                mobileMenuToggle.classList.remove('active');
-                mobileMenuToggle.style.transform = 'rotate(0deg)';
-                document.body.style.overflow = 'auto';
-            }
-        });
-    }
-    
-    // Parallax scrolling effect
-    function parallaxScroll() {
-        const scrolled = window.pageYOffset;
-        const parallaxElements = document.querySelectorAll('.parallax');
-        
-        parallaxElements.forEach(element => {
-            const speed = element.dataset.speed || 0.5;
-            const yPos = -(scrolled * speed);
-            element.style.transform = `translateY(${yPos}px)`;
-        });
-    }
-    
-    // Glitch text effect
-    function glitchText(element) {
-        const text = element.textContent;
-        const glitchChars = '!<>-_\\/[]{}—=+*^?#________';
-        let iterations = 0;
-        
-        const interval = setInterval(() => {
-            element.textContent = text.split('').map((char, index) => {
-                if (index < iterations) {
-                    return text[index];
-                }
-                return glitchChars[Math.floor(Math.random() * glitchChars.length)];
-            }).join('');
-            
-            if (iterations >= text.length) {
-                clearInterval(interval);
-            }
-            
-            iterations += 1 / 3;
-        }, 30);
-    }
-    
-    // Cursor trail effect
-    function createCursorTrail() {
-        const trail = [];
-        const trailLength = 20;
-        
-        for (let i = 0; i < trailLength; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'cursor-trail';
-            dot.style.cssText = `
-                position: fixed;
-                width: 4px;
-                height: 4px;
-                background: var(--primary-color);
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 9999;
-                opacity: ${1 - i / trailLength};
-                transition: all 0.1s ease;
-            `;
-            document.body.appendChild(dot);
-            trail.push(dot);
-        }
-        
-        document.addEventListener('mousemove', (e) => {
-            trail.forEach((dot, index) => {
-                setTimeout(() => {
-                    dot.style.left = e.clientX + 'px';
-                    dot.style.top = e.clientY + 'px';
-                }, index * 10);
-            });
-        });
-    }
-    
-    // Terminal typing animation
-    function animateTerminalTyping() {
-        const terminals = document.querySelectorAll('.terminal');
-        
-        terminals.forEach(terminal => {
-            const content = terminal.querySelector('.terminal-content');
-            if (!content) return;
-            
-            const lines = content.innerHTML.split('\n');
-            content.innerHTML = '';
-            
-            lines.forEach((line, index) => {
-                setTimeout(() => {
-                    const lineElement = document.createElement('div');
-                    lineElement.innerHTML = line;
-                    content.appendChild(lineElement);
-                    
-                    // Add typing sound effect (optional)
-                    if (line.includes('$')) {
-                        typeWriter(lineElement, line, 50);
-                    }
-                }, index * 800);
-            });
-        });
-    }
-    
-    // Initialize typewriter effects with enhanced animations
-    console.log('Initializing typewriter effects');
-    const typewriterElements = document.querySelectorAll('.typewriter');
-    console.log('Found typewriter elements:', typewriterElements.length);
-    typewriterElements.forEach((element, index) => {
-        const text = element.textContent.trim();
-        console.log('Processing element with text:', text);
-        if (text) {
-            setTimeout(() => {
-                typeWriter(element, text, 80);
-            }, index * 200);
+        } else {
+            element.style.setProperty('display', 'none', 'important');
         }
     });
-    
-    // Initialize glitch effects on hover
-    const glitchElements = document.querySelectorAll('.glitch-text');
-    glitchElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            glitchText(element);
-        });
-    });
-    
-    // Initialize scroll-based animations
-    window.addEventListener('scroll', () => {
-        parallaxScroll();
-        updateScrollProgress();
-    });
-    
-    // Scroll progress indicator
-    function updateScrollProgress() {
-        const scrollProgress = document.querySelector('.scroll-progress');
-        if (scrollProgress) {
-            const scrollTop = document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const progress = (scrollTop / scrollHeight) * 100;
-            scrollProgress.style.width = progress + '%';
-        }
-    }
-    
-    // Create cursor trail
-    createCursorTrail();
-    
-    // Animate terminals on page load
-    setTimeout(animateTerminalTyping, 1000);
-    
+}
 
-    
-    // Terminal command simulation
-    function simulateTerminalCommand(terminalElement, commands, delay = 1000) {
-        const content = terminalElement.querySelector('.terminal-content');
-        let commandIndex = 0;
-        
-        function executeCommand() {
-            if (commandIndex < commands.length) {
-                const command = commands[commandIndex];
-                const commandLine = document.createElement('div');
-                commandLine.innerHTML = `<span class="prompt">serein@security:~$</span> ${command.input}`;
-                content.appendChild(commandLine);
-                
-                setTimeout(() => {
-                    if (command.output) {
-                        const outputLine = document.createElement('div');
-                        outputLine.innerHTML = command.output;
-                        content.appendChild(outputLine);
-                    }
-                    commandIndex++;
-                    setTimeout(executeCommand, delay);
-                }, 500);
+function applyTranslatedAttributes(translations) {
+    document.querySelectorAll('[data-i18n]').forEach((element) => {
+        setI18nText(element, element.dataset.i18n, translations);
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((element) => {
+        const value = translate(element.dataset.i18nPlaceholder, translations);
+        if (value !== element.dataset.i18nPlaceholder) {
+            element.setAttribute('placeholder', value);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-title]').forEach((element) => {
+        const value = translate(element.dataset.i18nTitle, translations);
+        if (value !== element.dataset.i18nTitle) {
+            element.setAttribute('title', value);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+        const value = translate(element.dataset.i18nAriaLabel, translations);
+        if (value !== element.dataset.i18nAriaLabel) {
+            element.setAttribute('aria-label', value);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder-en], [data-i18n-placeholder-vi]').forEach((element) => {
+        const lang = getCurrentLanguage();
+        const key = lang === 'vi' ? 'i18nPlaceholderVi' : 'i18nPlaceholderEn';
+        if (element.dataset[key]) {
+            element.setAttribute('placeholder', element.dataset[key]);
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-title-en], [data-i18n-title-vi]').forEach((element) => {
+        const lang = getCurrentLanguage();
+        const key = lang === 'vi' ? 'i18nTitleVi' : 'i18nTitleEn';
+        if (element.dataset[key]) {
+            element.setAttribute('title', element.dataset[key]);
+        }
+    });
+}
+
+async function setLanguage(language) {
+    const resolved = language === 'en' ? 'en' : 'vi';
+    document.documentElement.setAttribute('data-lang', resolved);
+    document.documentElement.setAttribute('lang', resolved);
+    localStorage.setItem(SEREIN_LANG_KEY, resolved);
+    applyLegacyLanguageVisibility(resolved);
+
+    const translations = await loadTranslations(resolved);
+    applyTranslatedAttributes(translations);
+    applyLegacyLanguageVisibility(resolved);
+
+    document.querySelectorAll('[data-lang-btn]').forEach((button) => {
+        const isActive = button.dataset.langBtn === resolved;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+
+    document.dispatchEvent(new CustomEvent('serein:languagechange', {
+        detail: { language: resolved, translations },
+    }));
+}
+
+function getLangText(element) {
+    const lang = getCurrentLanguage();
+    const keyedText = element.dataset.i18n
+        ? translate(element.dataset.i18n)
+        : '';
+    if (keyedText && keyedText !== element.dataset.i18n) {
+        return keyedText.trim();
+    }
+
+    const langSpan = element.querySelector(`[data-lang-${lang}]`);
+    if (langSpan) {
+        return langSpan.textContent.trim();
+    }
+    return element.textContent.trim();
+}
+
+function closeMobileDrawer(mobileDrawer, mobileMenuToggle) {
+    mobileDrawer.classList.remove('active');
+    mobileMenuToggle.classList.remove('active');
+    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = 'auto';
+}
+
+function initNavigation() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+
+    if (mobileMenuToggle && mobileDrawer) {
+        mobileMenuToggle.addEventListener('click', () => {
+            const shouldOpen = !mobileDrawer.classList.contains('active');
+            mobileDrawer.classList.toggle('active', shouldOpen);
+            mobileMenuToggle.classList.toggle('active', shouldOpen);
+            mobileMenuToggle.setAttribute('aria-expanded', String(shouldOpen));
+            document.body.style.overflow = shouldOpen ? 'hidden' : 'auto';
+        });
+
+        mobileDrawer.querySelectorAll('.nav-link').forEach((link) => {
+            link.addEventListener('click', () => closeMobileDrawer(mobileDrawer, mobileMenuToggle));
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMobileDrawer(mobileDrawer, mobileMenuToggle);
             }
-        }
-        
-        executeCommand();
-    }
-    
-    // Animate skill bars
-
-    
-    // Fade in animation on scroll
-    function fadeInOnScroll() {
-        const elements = document.querySelectorAll('.fade-in-up');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        });
-        
-        elements.forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(30px)';
-            element.style.transition = 'all 0.6s ease';
-            observer.observe(element);
         });
     }
-    
-    // API functions
 
-    
+    const userDropdown = document.getElementById('userDropdown');
+    const userDropdownBtn = document.getElementById('userDropdownBtn');
+    if (userDropdown && userDropdownBtn) {
+        const setUserDropdownOpen = (isOpen) => {
+            userDropdown.classList.toggle('active', isOpen);
+            userDropdownBtn.setAttribute('aria-expanded', String(isOpen));
+        };
 
-    
-    // Load blog posts
-    async function loadBlogPosts() {
-        const blogContainer = document.getElementById('blog-posts');
-        if (!blogContainer) return;
-        
-        const data = await fetchAPI('articles');
-        if (data && data.success) {
-            let postsHTML = '';
-            
-            data.data.forEach(post => {
-                const excerpt = (post.content || '').replace(/<[^>]*>/g, '').substring(0, 200) + '...';
-                const date = new Date(post.created_at).toLocaleDateString();
-                
-                postsHTML += `
-                    <article class="post-item fade-in-up">
-                        <h2><a href="post.html?slug=${post.slug}" class="post-title">${post.title}</a></h2>
-                        <div class="post-meta">Published on ${date}</div>
-                        <div class="post-excerpt">${excerpt}</div>
-                        <a href="post.html?slug=${post.slug}" class="btn">Read More</a>
-                    </article>
-                `;
-            });
-            
-            blogContainer.innerHTML = postsHTML;
-            fadeInOnScroll();
-        }
+        userDropdownBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            setUserDropdownOpen(!userDropdown.classList.contains('active'));
+        });
+
+        userDropdown.querySelectorAll('.user-dropdown-item').forEach((item) => {
+            item.addEventListener('click', () => setUserDropdownOpen(false));
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!userDropdown.contains(event.target)) {
+                setUserDropdownOpen(false);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setUserDropdownOpen(false);
+                userDropdownBtn.focus();
+            }
+        });
     }
-    
-    // Load single post
-    async function loadSinglePost() {
-        const postContainer = document.getElementById('post-content');
-        if (!postContainer) return;
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const slug = urlParams.get('slug');
-        
-        if (!slug) {
-            postContainer.innerHTML = '<div class="card"><h2>Post not found</h2></div>';
+}
+
+function initLanguageSwitcher() {
+    document.querySelectorAll('[data-lang-btn]').forEach((button) => {
+        button.addEventListener('click', () => setLanguage(button.dataset.langBtn));
+    });
+    setLanguage(getStoredLanguage());
+}
+
+function initAnimations() {
+    document.querySelectorAll('.typewriter').forEach((element, index) => {
+        const lang = getCurrentLanguage();
+        const langSpan = element.querySelector(`[data-lang-${lang}]`);
+        const targetNode = langSpan || element;
+        const text = targetNode.textContent.trim();
+
+        if (!text) {
             return;
         }
-        
-        const data = await fetchAPI(`article&slug=${slug}`);
-        if (data && data.success && data.data) {
-            const post = data.data;
-            const date = new Date(post.created_at).toLocaleDateString();
-            
-            postContainer.innerHTML = `
-                <article class="card">
-                    <h1 class="card-title">${post.title}</h1>
-                    <div class="post-meta">Published on ${date}</div>
-                    <div class="card-content">${post.content}</div>
-                </article>
-            `;
-        } else {
-            postContainer.innerHTML = '<div class="card"><h2>Post not found</h2></div>';
-        }
-    }
-    
-// Load projects
-async function loadProjects() {
-    const projectsContainer = document.getElementById('projects-content');
-    if (!projectsContainer) return;
-    
-    const data = await fetchAPI('projects');
-    if (data && data.success) {
-        let projectsHTML = '<div class="grid grid-2">';
-        
-        data.data.forEach(project => {
-            projectsHTML += `
-                <div class="card fade-in-up">
-                    <h3 class="card-title">${project.title}</h3>
-                    <div class="card-content">
-                        <p>${project.description}</p>
-                        ${project.link ? `<a href="${project.link}" class="btn" target="_blank">View Project</a>` : ''}
-                    </div>
-                </div>
-            `;
+
+        targetNode.textContent = '';
+        element.style.whiteSpace = 'pre-wrap';
+        element.style.wordBreak = 'break-word';
+
+        let pointer = 0;
+        const type = () => {
+            if (pointer < text.length) {
+                targetNode.textContent += text.charAt(pointer);
+                pointer += 1;
+                const currentChar = text.charAt(pointer - 1);
+                const delay = /[.!?]/.test(currentChar) ? 90 : currentChar === ' ' ? 25 : 45;
+                setTimeout(type, delay);
+            }
+        };
+
+        setTimeout(type, index * 180);
+    });
+
+    document.querySelectorAll('.glitch-text').forEach((element) => {
+        element.addEventListener('mouseenter', () => {
+            const targetNode = element.querySelector(`[data-lang-${getCurrentLanguage()}]`) || element;
+            const stableText = targetNode.textContent;
+            const chars = '!<>-_\\/[]{}=+*?#';
+            let iterations = 0;
+            const interval = setInterval(() => {
+                targetNode.textContent = stableText
+                    .split('')
+                    .map((char, idx) => (idx < iterations ? stableText[idx] : chars[Math.floor(Math.random() * chars.length)]))
+                    .join('');
+                iterations += 1 / 3;
+                if (iterations >= stableText.length) {
+                    clearInterval(interval);
+                    targetNode.textContent = stableText;
+                }
+            }, 25);
         });
-        
-        projectsHTML += '</div>';
-        projectsContainer.innerHTML = projectsHTML;
-        fadeInOnScroll();
-    }
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in-up').forEach((element) => {
+        revealObserver.observe(element);
+    });
 }
-    
-    // Contact form handler
-    function handleContactForm() {
-        const contactForm = document.getElementById('contact-form');
-        if (!contactForm) return;
-        
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(contactForm);
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
-            
+
+function initScrollEffects() {
+    const scrollProgress = document.querySelector('.scroll-progress');
+    const updateScrollProgress = () => {
+        if (!scrollProgress) {
+            return;
+        }
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+        scrollProgress.style.width = `${progress}%`;
+    };
+
+    const applyParallax = () => {
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('.parallax').forEach((element) => {
+                element.style.transform = '';
+            });
+            return;
+        }
+        const scrolled = window.pageYOffset;
+        document.querySelectorAll('.parallax').forEach((element) => {
+            const speed = Number(element.dataset.speed || 0.35);
+            element.style.transform = `translateY(${-scrolled * speed}px)`;
+        });
+    };
+
+    window.addEventListener('scroll', () => {
+        updateScrollProgress();
+        applyParallax();
+    }, { passive: true });
+
+    window.addEventListener('resize', applyParallax);
+    updateScrollProgress();
+}
+
+function initLogout() {
+    document.querySelectorAll('.logout-btn').forEach((btn) => {
+        btn.addEventListener('click', async (event) => {
+            event.preventDefault();
             try {
-                const response = await fetch('api.php', {
+                const response = await fetch('/api/auth/logout', {
                     method: 'POST',
-                    body: formData
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('Message sent successfully!');
-                    contactForm.reset();
-                } else {
-                    alert('Error sending message: ' + (result.message || 'Unknown error'));
+                if (response.ok || response.status === 401) {
+                    window.location.href = '/login';
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error sending message. Please try again.');
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-    }
-    
-    // Load SEO data
-    async function loadSEOData() {
-        const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'home';
-        
-        const data = await fetchAPI(`seo&page=${currentPage}`);
-        if (data && data.success && data.data) {
-            const seo = data.data;
-            
-            document.title = seo.title;
-            
-            let metaDescription = document.querySelector('meta[name="description"]');
-            if (!metaDescription) {
-                metaDescription = document.createElement('meta');
-                metaDescription.name = 'description';
-                document.head.appendChild(metaDescription);
-            }
-            metaDescription.content = seo.description;
-            
-            let metaKeywords = document.querySelector('meta[name="keywords"]');
-            if (!metaKeywords) {
-                metaKeywords = document.createElement('meta');
-                metaKeywords.name = 'keywords';
-                document.head.appendChild(metaKeywords);
-            }
-            metaKeywords.content = seo.keywords;
-        }
-    }
-    
-    // Enhanced Matrix Rain Effect with Performance Optimization
-    function createMatrixRain() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.id = 'matrix-canvas';
-        canvas.style.position = 'fixed';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.pointerEvents = 'none';
-        canvas.style.zIndex = '-1';
-        canvas.style.opacity = '0.15';
-        canvas.style.mixBlendMode = 'screen';
-        
-        document.body.appendChild(canvas);
-        
-        let animationId;
-        let isVisible = true;
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initializeDrops();
-        }
-        
-        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-        const matrixArray = matrix.split("");
-        
-        const fontSize = window.innerWidth <= 768 ? 8 : 12;
-        let columns, drops;
-        
-        function initializeDrops() {
-            columns = Math.floor(canvas.width / fontSize);
-            drops = [];
-            
-            for (let x = 0; x < columns; x++) {
-                drops[x] = Math.floor(Math.random() * canvas.height / fontSize);
-            }
-        }
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Pause animation when tab is not visible
-        document.addEventListener('visibilitychange', () => {
-            isVisible = !document.hidden;
-            if (isVisible) {
-                animate();
-            } else {
-                cancelAnimationFrame(animationId);
-            }
-        });
-        
-        function draw() {
-            // Create fade effect
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Set text properties
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px "Courier New", monospace';
-            ctx.textAlign = 'center';
-            
-            // Draw matrix characters
-            for (let i = 0; i < drops.length; i++) {
-                // Add glow effect for some characters
-                if (Math.random() > 0.98) {
-                    ctx.shadowColor = '#00ff41';
-                    ctx.shadowBlur = 10;
-                } else {
-                    ctx.shadowBlur = 0;
-                }
-                
-                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
-                const x = i * fontSize + fontSize / 2;
-                const y = drops[i] * fontSize;
-                
-                ctx.fillText(text, x, y);
-                
-                // Reset drop when it reaches bottom
-                if (y > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-            
-            ctx.shadowBlur = 0;
-        }
-        
-        function animate() {
-            if (isVisible) {
-                draw();
-                animationId = requestAnimationFrame(animate);
-            }
-        }
-        
-        animate();
-        
-        // Return control functions
-        return {
-            pause: () => {
-                isVisible = false;
-                cancelAnimationFrame(animationId);
-            },
-            resume: () => {
-                isVisible = true;
-                animate();
-            },
-            destroy: () => {
-                cancelAnimationFrame(animationId);
-                canvas.remove();
-            }
-        };
-    }
-    
-    // Enhanced Particle System with Better Performance
-    function createParticleSystem() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.id = 'particle-canvas';
-        canvas.style.position = 'fixed';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.pointerEvents = 'none';
-        canvas.style.zIndex = '-2';
-        canvas.style.opacity = '0.6';
-        
-        document.body.appendChild(canvas);
-        
-        let animationId;
-        let isVisible = true;
-        const particles = [];
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Particle class
-        class Particle {
-            constructor() {
-                this.reset();
-                this.y = Math.random() * canvas.height;
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = -10;
-                this.size = Math.random() * 2 + 0.5;
-                this.speed = Math.random() * 2 + 0.5;
-                this.opacity = Math.random() * 0.5 + 0.3;
-                this.drift = (Math.random() - 0.5) * 0.5;
-            }
-            
-            update() {
-                this.y += this.speed;
-                this.x += this.drift;
-                
-                // Reset particle when it goes off screen
-                if (this.y > canvas.height + 10 || this.x < -10 || this.x > canvas.width + 10) {
-                    this.reset();
-                }
-            }
-            
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = '#00ff41';
-                ctx.shadowColor = '#00ff41';
-                ctx.shadowBlur = this.size * 2;
-                
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.restore();
-            }
-        }
-        
-        // Create particles
-        const particleCount = window.innerWidth <= 768 ? 20 : 40;
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
-        // Pause animation when tab is not visible
-        document.addEventListener('visibilitychange', () => {
-            isVisible = !document.hidden;
-            if (isVisible) {
-                animate();
-            } else {
-                cancelAnimationFrame(animationId);
-            }
-        });
-        
-        function animate() {
-            if (!isVisible) return;
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Update and draw particles
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            
-            animationId = requestAnimationFrame(animate);
-        }
-        
-        animate();
-        
-        // Return control functions
-        return {
-            pause: () => {
-                isVisible = false;
-                cancelAnimationFrame(animationId);
-            },
-            resume: () => {
-                isVisible = true;
-                animate();
-            },
-            destroy: () => {
-                cancelAnimationFrame(animationId);
-                canvas.remove();
-            }
-        };
-    }
-    
-    // Enhanced touch and swipe support for mobile
-    function addTouchSupport() {
-        let startY = 0;
-        let startX = 0;
-        let isScrolling = false;
-        
-        // Improve touch scrolling performance
-        document.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-            startX = e.touches[0].clientX;
-            isScrolling = false;
-        }, { passive: true });
-        
-        document.addEventListener('touchmove', (e) => {
-            if (!startY || !startX) return;
-            
-            const currentY = e.touches[0].clientY;
-            const currentX = e.touches[0].clientX;
-            const diffY = startY - currentY;
-            const diffX = startX - currentX;
-            
-            // Determine if user is scrolling
-            if (Math.abs(diffY) > Math.abs(diffX)) {
-                isScrolling = true;
-            }
-            
-            // Horizontal swipe detection (only if not scrolling)
-            if (!isScrolling && Math.abs(diffX) > Math.abs(diffY)) {
-                if (diffX > 50) {
-                    // Swipe left - close mobile menu if open
-                    const navMenu = document.querySelector('.nav-menu');
-                    const mobileToggle = document.querySelector('.mobile-menu-toggle');
-                    if (navMenu && navMenu.classList.contains('active')) {
-                        navMenu.classList.remove('active');
-                        mobileToggle.classList.remove('active');
-                        mobileToggle.style.transform = 'rotate(0deg)';
-                        document.body.style.overflow = 'auto';
-                    }
-                } else if (diffX < -50) {
-                    // Swipe right - could open mobile menu or navigate back
-                    console.log('Swipe right detected');
-                }
-            }
-        }, { passive: true });
-        
-        document.addEventListener('touchend', () => {
-            startY = 0;
-            startX = 0;
-            isScrolling = false;
-        }, { passive: true });
-    }
-    
-    // Optimize animations for mobile devices
-    function optimizeForMobile() {
-        const isMobile = window.innerWidth <= 768;
-        
-        if (isMobile) {
-            // Disable heavy animations on mobile
-            document.body.classList.add('mobile-device');
-            
-            // Disable parallax on mobile for better performance
-            const parallaxElements = document.querySelectorAll('.parallax');
-            parallaxElements.forEach(el => {
-                el.style.transform = 'none';
-            });
-        }
-    }
-    
-    // Handle orientation change
-    function handleOrientationChange() {
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                // Recalculate dimensions after orientation change
-                window.scrollTo(0, 0);
-                
-                // Reinitialize certain components if needed
-                const navMenu = document.querySelector('.nav-menu');
-                const mobileToggle = document.querySelector('.mobile-menu-toggle');
-                if (navMenu && navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                    mobileToggle.classList.remove('active');
-                    mobileToggle.style.transform = 'rotate(0deg)';
-                    document.body.style.overflow = 'auto';
-                }
-                
-                // Trigger resize event
-                window.dispatchEvent(new Event('resize'));
-            }, 100);
-        });
-    }
-    
-    // Initialize everything
-    loadSEOData();
-    loadAboutData();
-    loadBlogPosts();
-    loadSinglePost();
-    loadProjects();
-    handleContactForm();
-    fadeInOnScroll();
-    animateSkillBars();
-    
-    // Initialize mobile enhancements
-    addTouchSupport();
-    optimizeForMobile();
-    handleOrientationChange();
-    
-    // Initialize enhanced visual effects with performance monitoring
-    let matrixRain, particleSystem;
-    
-    // Only create effects if device can handle them
-    const canHandleEffects = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && 
-                            window.innerWidth > 480 && 
-                            !navigator.userAgent.includes('Mobile');
-    
-    if (canHandleEffects) {
-        matrixRain = createMatrixRain();
-        particleSystem = createParticleSystem();
-        
-        // Pause effects when page is not visible to save resources
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                matrixRain?.pause();
-                particleSystem?.pause();
-            } else {
-                matrixRain?.resume();
-                particleSystem?.resume();
-            }
-        });
-    }
-    
-    // Clean up on page unload
-    window.addEventListener('beforeunload', () => {
-        matrixRain?.destroy();
-        particleSystem?.destroy();
-    });
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                console.error('Logout failed:', error);
+                window.location.href = '/login';
             }
         });
     });
-    
-    // Add active class to current nav item
-    const currentPage = window.location.pathname.split('/').pop();
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage || 
-            (currentPage === '' && link.getAttribute('href') === 'index.html')) {
-            link.classList.add('active');
+}
+
+window.SereinI18n = {
+    setLanguage,
+    t: (key) => translate(key),
+    setText: (element, key) => {
+        if (!element) {
+            return;
         }
-    });
+        element.dataset.i18n = key;
+        setI18nText(element, key, SEREIN_TRANSLATION_CACHE[getCurrentLanguage()] || {});
+    },
+    apply: () => applyTranslatedAttributes(SEREIN_TRANSLATION_CACHE[getCurrentLanguage()] || {}),
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    initLanguageSwitcher();
+    initNavigation();
+    initAnimations();
+    initScrollEffects();
+    initLogout();
 });

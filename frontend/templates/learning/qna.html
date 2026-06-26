@@ -1,0 +1,656 @@
+{% extends 'learning/base.html' %}
+{% block title %}Q&A Forum | Serein Learning{% endblock %}
+{% block head %}
+<style>
+    /* Premium Cyberpunk Styles for Forum */
+    :root {
+        --cyber-cyan: #00f0ff;
+        --cyber-magenta: #ff007f;
+        --cyber-green: #39ff14;
+        --cyber-bg: #0a0a12;
+        --glass-bg: rgba(16, 16, 28, 0.7);
+        --glass-border: rgba(0, 240, 255, 0.15);
+        --neon-glow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+
+    .forum-container {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        color: #e2e8f0;
+    }
+
+    .forum-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    /* Thread Search & Action Bar */
+    .action-bar {
+        display: flex;
+        gap: 16px;
+        width: 100%;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+    }
+    .search-input-wrapper {
+        flex: 1;
+        min-width: 250px;
+        position: relative;
+    }
+    .search-input {
+        width: 100%;
+        background: rgba(20, 20, 35, 0.6);
+        border: 1px solid var(--glass-border);
+        padding: 12px 16px 12px 40px;
+        border-radius: 8px;
+        color: #fff;
+        font-family: var(--font-mono);
+        transition: all 0.3s ease;
+    }
+    .search-input:focus {
+        border-color: var(--cyber-cyan);
+        box-shadow: var(--neon-glow);
+        outline: none;
+    }
+    .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        color: #718096;
+    }
+
+    .btn-ask {
+        background: linear-gradient(135deg, var(--cyber-magenta), #b800ff);
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+        transition: all 0.3s ease;
+    }
+    .btn-ask:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(255, 0, 127, 0.6);
+    }
+
+    /* Forum forms (Ask / Answer) */
+    .form-panel {
+        background: var(--glass-bg);
+        border: 1px solid var(--cyber-cyan);
+        box-shadow: var(--neon-glow);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+    .form-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .form-title .btn-close {
+        background: none;
+        border: none;
+        color: #718096;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: color 0.3s ease;
+    }
+    .form-title .btn-close:hover {
+        color: var(--cyber-magenta);
+    }
+
+    /* Thread Cards list */
+    .threads-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .thread-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .thread-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: transparent;
+        transition: background 0.3s ease;
+    }
+    .thread-card:hover {
+        border-color: rgba(0, 240, 255, 0.4);
+        box-shadow: var(--neon-glow);
+        transform: translateX(4px);
+    }
+    .thread-card:hover::before {
+        background: var(--cyber-cyan);
+    }
+
+    .thread-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .thread-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    .thread-card:hover .thread-title {
+        color: var(--cyber-cyan);
+    }
+    .thread-meta {
+        font-size: 0.8rem;
+        color: #a0aec0;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .thread-author {
+        color: var(--cyber-cyan);
+        font-weight: 550;
+    }
+    .thread-body-excerpt {
+        font-size: 0.95rem;
+        color: #cbd5e0;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .thread-tags-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .tag-pill {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        background: rgba(0, 240, 255, 0.08);
+        color: var(--cyber-cyan);
+        border: 1px solid rgba(0, 240, 255, 0.2);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .comment-count-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 0, 127, 0.1);
+        color: var(--cyber-magenta);
+        border: 1px solid rgba(255, 0, 127, 0.2);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-family: var(--font-mono);
+    }
+
+    /* Thread detail page view */
+    .thread-detail-view {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 30px;
+        display: none;
+    }
+    .btn-back-forum {
+        background: rgba(20, 20, 35, 0.8);
+        border: 1px solid var(--glass-border);
+        color: #a0aec0;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-mono);
+        transition: all 0.3s ease;
+    }
+    .btn-back-forum:hover {
+        color: #fff;
+        border-color: var(--cyber-cyan);
+    }
+    .detail-header {
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    .detail-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 12px;
+        text-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+    .detail-body {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #e2e8f0;
+        margin-bottom: 30px;
+        white-space: pre-line;
+    }
+
+    /* Answers / Discussion Replies list */
+    .answers-section {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 24px;
+    }
+    .answers-heading {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .answer-card {
+        background: rgba(10, 10, 18, 0.4);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 8px;
+        padding: 18px;
+        margin-bottom: 16px;
+    }
+    .answer-meta {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .answer-author {
+        color: var(--cyber-magenta);
+        font-weight: 600;
+    }
+    .answer-content {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #cbd5e0;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<section class="dashboard-shell">
+    {% include 'partials/learning_sidebar.html' %}
+
+    <div class="dashboard-content">
+        <!-- Forum Main List Container -->
+        <div id="forumListView" class="forum-container">
+            <section class="hero-card learning-panel">
+                <div class="hero-label"><span data-lang-vi>Học hỏi & Chia sẻ</span><span data-lang-en>Q&A Forum</span></div>
+                <h1 class="hero-title-sm"><span data-lang-vi>Diễn đàn thảo luận lập trình</span><span data-lang-en>Developer Discussion Forum</span></h1>
+                <p class="hero-desc">
+                    <span data-lang-vi>Nơi thảo luận về các vấn đề kỹ thuật lập trình, trao đổi kinh nghiệm, giải quyết khó khăn cùng cộng đồng Serein Learning.</span>
+                    <span data-lang-en>A place to discuss technical coding problems, exchange experiences, and solve blockers together with the Serein Learning community.</span>
+                </p>
+            </section>
+
+            <!-- Search and Ask controls -->
+            <div class="action-bar">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="forumSearch" placeholder="Tìm kiếm câu hỏi..." data-placeholder-en="Search discussions...">
+                </div>
+                <button type="button" class="btn-ask" id="btnToggleAskForm">
+                    <span>+</span>
+                    <span data-lang-vi>Đặt câu hỏi</span>
+                    <span data-lang-en>Ask Question</span>
+                </button>
+            </div>
+
+            <!-- Create Question Form panel (hidden by default) -->
+            <div class="form-panel" id="askFormPanel" style="display: none;">
+                <div class="form-title">
+                    <span data-lang-vi>Tạo câu hỏi thảo luận mới</span>
+                    <span data-lang-en>Create New Discussion Question</span>
+                    <button class="btn-close" type="button" id="btnCancelAsk">×</button>
+                </div>
+                <form id="createQuestionForm" class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label" for="title"><span data-lang-vi>Tiêu đề</span><span data-lang-en>Title</span></label>
+                        <input class="form-input" id="title" name="title" required placeholder="Nêu vắn tắt vấn đề của bạn..." data-placeholder-en="State your problem clearly...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tags"><span data-lang-vi>Thẻ / Tags (cách nhau bằng dấu phẩy)</span><span data-lang-en>Tags (comma separated)</span></label>
+                        <input class="form-input" id="tags" name="tags" placeholder="Ví dụ: java, spring, rest-api" data-placeholder-en="E.g., java, spring, rest-api">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="content"><span data-lang-vi>Nội dung chi tiết</span><span data-lang-en>Detailed Content</span></label>
+                        <textarea class="form-textarea" id="content" name="content" rows="6" required placeholder="Mô tả cụ thể câu hỏi hoặc lỗi bạn đang gặp phải..." data-placeholder-en="Describe the details of your question or error..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn"><span data-lang-vi>Đăng câu hỏi</span><span data-lang-en>Post Question</span></button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Thread List Grid -->
+            <div class="threads-list" id="threadsContainer">
+                <!-- Dynamic threads rendered via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Thread Detail View (hidden by default) -->
+        <div id="forumDetailView" class="thread-detail-view">
+            <button class="btn-back-forum" type="button" id="btnBackToForum">
+                <span>←</span>
+                <span data-lang-vi>Quay lại diễn đàn</span>
+                <span data-lang-en>Back to forum</span>
+            </button>
+
+            <div class="detail-header">
+                <h1 class="detail-title" id="detailTitle">Question Title</h1>
+                <div class="thread-meta">
+                    <span><span data-lang-vi>Đăng bởi: </span><span data-lang-en>By: </span><span class="thread-author" id="detailAuthor">Author</span></span>
+                    <span>•</span>
+                    <span id="detailDate">Date</span>
+                    <span id="detailTags" class="thread-tags-row"></span>
+                </div>
+            </div>
+
+            <div class="detail-body" id="detailBody">
+                Question content body...
+            </div>
+
+            <div class="answers-section">
+                <h3 class="answers-heading">
+                    💬 <span data-lang-vi>Thảo luận</span><span data-lang-en>Discussion</span>
+                    (<span id="detailAnswersCount">0</span>)
+                </h3>
+                
+                <!-- Existing Answers -->
+                <div id="answersListContainer">
+                    <!-- Dynamic replies rendered via JS -->
+                </div>
+
+                <!-- Add Answer Form -->
+                <div class="form-panel" style="margin-top: 24px;">
+                    <div class="form-title">
+                        <span data-lang-vi>Tham gia thảo luận</span>
+                        <span data-lang-en>Add your reply</span>
+                    </div>
+                    <form id="addAnswerForm" class="auth-form">
+                        <input type="hidden" id="answerQuestionId">
+                        <div class="form-group">
+                            <textarea class="form-textarea" id="answerContent" name="content" rows="4" required placeholder="Nhập câu trả lời hoặc ý kiến đóng góp của bạn..." data-placeholder-en="Enter your answer or input..."></textarea>
+                        </div>
+                        <button type="submit" class="btn"><span data-lang-vi>Gửi phản hồi</span><span data-lang-en>Submit Reply</span></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let threadsData = [];
+    let activeThreadId = null;
+
+    // Load all discussions from API
+    async function loadThreads() {
+        try {
+            const res = await fetch('/api/learning/qna/questions', { credentials: 'include' });
+            if (!res.ok) throw new Error("Failed to load forum questions");
+            threadsData = await res.json();
+            renderThreads();
+        } catch (err) {
+            console.error(err);
+            document.getElementById('threadsContainer').innerHTML = `<div class="empty-state"><span data-lang-vi>Không thể tải dữ liệu diễn đàn.</span><span data-lang-en>Failed to load discussions.</span></div>`;
+        }
+    }
+
+    // Render thread list to DOM
+    function renderThreads(filterText = "") {
+        const container = document.getElementById('threadsContainer');
+        const query = filterText.toLowerCase().trim();
+        
+        const filtered = threadsData.filter(t => {
+            return t.title.toLowerCase().includes(query) || 
+                   t.content.toLowerCase().includes(query) ||
+                   t.tags.toLowerCase().includes(query);
+        });
+
+        if (!filtered.length) {
+            container.innerHTML = `<div class="empty-state"><span data-lang-vi>Không tìm thấy bài đăng thảo luận nào.</span><span data-lang-en>No discussion posts found.</span></div>`;
+            return;
+        }
+
+        container.innerHTML = filtered.map(t => {
+            const tagsHtml = t.tags ? t.tags.split(',').map(tag => `<span class="tag-pill">${tag.trim()}</span>`).join('') : '';
+            const createdDate = new Date(t.created_at).toLocaleDateString();
+            
+            return `
+                <div class="thread-card" onclick="viewThread(${t.id})">
+                    <div class="thread-top">
+                        <h2 class="thread-title">${t.title}</h2>
+                        <div class="comment-count-badge">
+                            <span>💬</span>
+                            <span>${t.answers_count}</span>
+                        </div>
+                    </div>
+                    <p class="thread-body-excerpt">${t.content}</p>
+                    <div class="thread-top" style="margin-bottom: 0; margin-top: 12px;">
+                        <div class="thread-meta">
+                            <span><span data-lang-vi>Đăng bởi: </span><span data-lang-en>By: </span><span class="thread-author">${t.username}</span></span>
+                            <span>•</span>
+                            <span>${createdDate}</span>
+                        </div>
+                        <div class="thread-tags-row">
+                            ${tagsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Apply language translation tags
+        applyLanguageStrings();
+    }
+
+    // View specific thread in detail view
+    async function viewThread(questionId) {
+        try {
+            const res = await fetch(`/api/learning/qna/questions/${questionId}`, { credentials: 'include' });
+            if (!res.ok) throw new Error("Failed to load question details");
+            const data = await res.json();
+            
+            activeThreadId = data.id;
+            
+            // Populate fields
+            document.getElementById('detailTitle').innerText = data.title;
+            document.getElementById('detailAuthor').innerText = data.username;
+            document.getElementById('detailDate').innerText = new Date(data.created_at).toLocaleDateString();
+            document.getElementById('detailBody').innerText = data.content;
+            document.getElementById('detailAnswersCount').innerText = data.answers_count;
+            document.getElementById('answerQuestionId').value = data.id;
+            
+            // tags
+            const tagsContainer = document.getElementById('detailTags');
+            tagsContainer.innerHTML = data.tags ? data.tags.split(',').map(t => `<span class="tag-pill">${t.trim()}</span>`).join('') : '';
+            
+            // replies
+            const answersContainer = document.getElementById('answersListContainer');
+            if (data.answers.length === 0) {
+                answersContainer.innerHTML = `<div class="empty-state" style="padding: 20px;"><span data-lang-vi>Chưa có thảo luận nào. Hãy là người đầu tiên trả lời!</span><span data-lang-en>No replies yet. Be the first to answer!</span></div>`;
+            } else {
+                answersContainer.innerHTML = data.answers.map(a => {
+                    return `
+                        <div class="answer-card">
+                            <div class="answer-meta">
+                                <span class="answer-author">${a.username}</span>
+                                <span>${new Date(a.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <div class="answer-content">${a.content}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Switch views
+            document.getElementById('forumListView').style.display = 'none';
+            document.getElementById('forumDetailView').style.display = 'block';
+            
+            applyLanguageStrings();
+        } catch (err) {
+            console.error(err);
+            alert("Error loading discussion details.");
+        }
+    }
+
+    // Cancel detail view and return to list
+    function exitDetailView() {
+        activeThreadId = null;
+        document.getElementById('forumDetailView').style.display = 'none';
+        document.getElementById('forumListView').style.display = 'flex';
+        loadThreads();
+    }
+
+    // Helper to trigger lang strings translation
+    function applyLanguageStrings() {
+        if (typeof window.renderLanguages === 'function') {
+            window.renderLanguages();
+        } else {
+            const curLang = document.documentElement.getAttribute('data-lang') || 'vi';
+            document.querySelectorAll('[data-lang-vi]').forEach(el => el.style.display = curLang === 'vi' ? '' : 'none');
+            document.querySelectorAll('[data-lang-en]').forEach(el => el.style.display = curLang === 'en' ? '' : 'none');
+            
+            // Handle placeholders
+            document.querySelectorAll('[data-placeholder-en]').forEach(input => {
+                if (curLang === 'en') {
+                    input.setAttribute('placeholder', input.getAttribute('data-placeholder-en'));
+                } else {
+                    // restore vi (assumed initial state)
+                }
+            });
+        }
+    }
+
+    // Event listener configurations
+    document.addEventListener('DOMContentLoaded', () => {
+        loadThreads();
+
+        // Search filtering
+        document.getElementById('forumSearch').addEventListener('input', (e) => {
+            renderThreads(e.target.value);
+        });
+
+        // Ask question panel toggle
+        const askBtn = document.getElementById('btnToggleAskForm');
+        const askFormPanel = document.getElementById('askFormPanel');
+        const cancelAskBtn = document.getElementById('btnCancelAsk');
+        
+        askBtn.addEventListener('click', () => {
+            askFormPanel.style.display = askFormPanel.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        cancelAskBtn.addEventListener('click', () => {
+            askFormPanel.style.display = 'none';
+        });
+
+        // Handle create question form submit
+        document.getElementById('createQuestionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const payload = {
+                title: form.title.value,
+                tags: form.tags.value,
+                content: form.content.value
+            };
+
+            try {
+                const res = await fetch('/api/learning/qna/questions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error("Failed to create thread");
+                
+                // Clear and hide form
+                form.reset();
+                askFormPanel.style.display = 'none';
+                
+                // Reload questions
+                await loadThreads();
+            } catch (err) {
+                console.error(err);
+                alert("Failed to submit question. Please check credentials and try again.");
+            }
+        });
+
+        // Back to list
+        document.getElementById('btnBackToForum').addEventListener('click', exitDetailView);
+
+        // Submit new answer response
+        document.getElementById('addAnswerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const questionId = document.getElementById('answerQuestionId').value;
+            const payload = {
+                content: form.content.value
+            };
+
+            try {
+                const res = await fetch(`/api/learning/qna/questions/${questionId}/answers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error("Failed to post reply");
+                
+                form.reset();
+                // Refresh detail view
+                viewThread(questionId);
+            } catch (err) {
+                console.error(err);
+                alert("Failed to post reply. Please check connection and try again.");
+            }
+        });
+
+        // Sync translation triggers
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTimeout(applyLanguageStrings, 50);
+            });
+        });
+    });
+</script>
+{% endblock %}
