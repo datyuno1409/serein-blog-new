@@ -11,7 +11,7 @@ from ..auth import create_access_token, get_current_user
 from ..config import settings
 from ..database import get_db
 from ..models.user import User, UserRole
-from ..schemas import Token, UserCreate, UserResponse
+from ..schemas import PasswordChange, Token, UserCreate, UserResponse
 
 router = APIRouter()
 
@@ -69,6 +69,23 @@ async def login(
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.post("/change-password")
+async def change_password(
+    password_data: PasswordChange,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not current_user.verify_password(password_data.current_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect",
+        )
+
+    current_user.password_hash = User.hash_password(password_data.new_password)
+    db.commit()
+    return {"message": "Password changed successfully"}
 
 
 @router.post("/logout")

@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List, Union
+from typing import List, Optional, Union
 from pydantic import field_validator
 
 
@@ -33,7 +33,9 @@ class Settings(BaseSettings):
     max_upload_size: int = 5242880  # 5MB
     
     # Admin
+    admin_username: str = "admin"
     admin_email: str = "admin@serein.com"
+    admin_password: Optional[str] = None
     
     class Config:
         env_file = ".env"

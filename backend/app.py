@@ -16,6 +16,7 @@ from . import models
 from .api import api_router
 from .config import settings
 from .database import Base, SessionLocal, engine, get_db
+from .models.user import User, UserRole
 from .page_deps import build_learning_context, get_user_from_request
 from .seed_learning import INTENSITY_LABELS, run_seed_if_needed
 from .seed_hsk import seed_hsk_data
@@ -23,6 +24,42 @@ from .roadmap_data import CAREER_LEVELS, ROADMAP_TOPICS, ROADMAP_QUOTE
 
 
 Base.metadata.create_all(bind=engine)
+
+
+def _role_value(role) -> str:
+    return str(getattr(role, "value", role) or "").lower()
+
+
+def _ensure_env_admin():
+    if not settings.admin_password:
+        return
+
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.username == settings.admin_username).first()
+        if user:
+            user.email = user.email or settings.admin_email
+            user.full_name = user.full_name or "Serein Admin"
+            user.password_hash = User.hash_password(settings.admin_password)
+            user.role = UserRole.ADMIN
+        else:
+            user = User(
+                username=settings.admin_username,
+                email=settings.admin_email,
+                full_name="Serein Admin",
+                password_hash=User.hash_password(settings.admin_password),
+                role=UserRole.ADMIN,
+            )
+            db.add(user)
+        db.commit()
+    finally:
+        db.close()
+
+
+try:
+    _ensure_env_admin()
+except Exception as exc:
+    print(f"[admin] skipped env admin setup: {exc}")
 
 try:
     run_seed_if_needed()
@@ -66,10 +103,8 @@ async def admin_auth_middleware(request: Request, call_next):
                     if username:
                         db = SessionLocal()
                         try:
-                            from .models.user import User
-
                             user = db.query(User).filter(User.username == username).first()
-                            if user and user.role.value == "admin":
+                            if user and _role_value(user.role) == "admin":
                                 is_authenticated = True
                         finally:
                             db.close()
@@ -435,6 +470,11 @@ async def admin_projects(request: Request):
 
 @app.get("/admin/settings", response_class=HTMLResponse)
 async def admin_settings(request: Request):
+    return templates.TemplateResponse("admin/settings.html", {"request": request})
+
+
+@app.get("/admin/appearance", response_class=HTMLResponse)
+async def admin_appearance(request: Request):
     return templates.TemplateResponse("admin/settings.html", {"request": request})
 
 
