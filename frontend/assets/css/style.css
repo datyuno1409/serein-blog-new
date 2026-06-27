@@ -1637,6 +1637,68 @@ main {
     backface-visibility: hidden;
 }
 
+/* Final mobile navigation guard: keeps older page-specific drawer rules from
+   hiding the menu after script.js marks it open. */
+@media (max-width: 1100px) {
+    .mobile-menu-toggle {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        position: relative;
+        z-index: 1301;
+        touch-action: manipulation;
+    }
+
+    .mobile-drawer {
+        position: fixed !important;
+        inset: 66px 0 auto 0 !important;
+        display: block !important;
+        width: 100% !important;
+        max-height: calc(100dvh - 66px) !important;
+        overflow-y: auto !important;
+        padding: 1rem !important;
+        background: rgba(5, 5, 5, 0.99) !important;
+        border: 0 !important;
+        border-bottom: 1px solid rgba(0, 255, 136, 0.18) !important;
+        box-shadow: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transform: translateY(-8px) !important;
+        pointer-events: none !important;
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
+        z-index: 1300 !important;
+    }
+
+    .mobile-drawer.active,
+    .mobile-drawer.open {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+        pointer-events: auto !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55) !important;
+    }
+
+    .mobile-nav-list {
+        display: grid !important;
+        gap: 0.5rem !important;
+        list-style: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .mobile-nav-list .nav-link {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 0.85rem 1rem !important;
+        border-radius: 8px !important;
+        touch-action: manipulation;
+    }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;

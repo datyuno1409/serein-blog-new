@@ -45,6 +45,8 @@ def main() -> None:
         roadmap_topics=ROADMAP_TOPICS,
         roadmap_quote=ROADMAP_QUOTE,
     )
+    render_template(env, "learning/login.html", "login/index.html", nav_active="login")
+    render_template(env, "learning/register.html", "register/index.html", nav_active="register")
 
     shutil.copy2(ROOT / "frontend" / "templates" / "404.html", DIST / "404.html")
     write_text(
@@ -55,12 +57,10 @@ def main() -> None:
                 "/portfolio / 301",
                 "/about / 301",
                 "/post /blog 302",
-                "/learning / 302",
-                "/learning/* / 302",
-                "/my-profile / 302",
+                "/learning /login 302",
+                "/learning/* /login 302",
+                "/my-profile /login 302",
                 "/my-course /blog 302",
-                "/login / 302",
-                "/register / 302",
                 "/* /404.html 404",
                 "",
             ]

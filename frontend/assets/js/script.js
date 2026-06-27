@@ -147,9 +147,10 @@ function getLangText(element) {
 
 function closeMobileDrawer(mobileDrawer, mobileMenuToggle) {
     mobileDrawer.classList.remove('active');
+    mobileDrawer.classList.remove('open');
     mobileMenuToggle.classList.remove('active');
     mobileMenuToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
 }
 
 function initNavigation() {
@@ -160,9 +161,10 @@ function initNavigation() {
         mobileMenuToggle.addEventListener('click', () => {
             const shouldOpen = !mobileDrawer.classList.contains('active');
             mobileDrawer.classList.toggle('active', shouldOpen);
+            mobileDrawer.classList.toggle('open', shouldOpen);
             mobileMenuToggle.classList.toggle('active', shouldOpen);
             mobileMenuToggle.setAttribute('aria-expanded', String(shouldOpen));
-            document.body.style.overflow = shouldOpen ? 'hidden' : 'auto';
+            document.body.style.overflow = shouldOpen ? 'hidden' : '';
         });
 
         mobileDrawer.querySelectorAll('.nav-link').forEach((link) => {
