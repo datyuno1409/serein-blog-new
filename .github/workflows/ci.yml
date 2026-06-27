@@ -1,0 +1,38 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest requests
+
+      - name: Compile backend entrypoints
+        run: |
+          python -m py_compile main.py
+          python -m py_compile backend/app.py backend/api/auth.py backend/config.py backend/schemas.py
+          python -m py_compile scripts/create_admin.py
+
+      - name: Run regression tests
+        run: pytest tests/test_all_routes.py tests/test_i18n_navbar_regression.py
